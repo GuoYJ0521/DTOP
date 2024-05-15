@@ -1,0 +1,284 @@
+{% extends "base.html" %}
+
+{% block content %}
+<form method="POST">
+    <fieldset>
+        <legend class="fs-5 my-0">Material Property</legend>
+        {{ form.hidden_tag() }}
+        <table class="fs-6">
+            <tr>
+                <!-- 框格名稱 -->
+                <td class="p-1">{{ form.property1.label() }}</td>
+                <!-- 框格 -->
+                <td class="p-1">{{ form.property1() }}</td>
+                <td>unit</td>
+            </tr>
+            <tr>
+                <!-- 框格名稱 -->
+                <td class="p-1">{{ form.property2.label() }}</td>
+                <!-- 框格 -->
+                <td class="p-1">{{ form.property2() }}</td>
+                <td>unit</td>
+            </tr>
+            <tr>
+                <!-- 框格名稱 -->
+                <td class="p-1">{{ form.property3.label() }}</td>
+                <!-- 框格 -->
+                <td class="p-1">{{ form.property3() }}</td>
+                <td>unit</td>
+            </tr>
+            <tr>
+                <!-- 框格名稱 -->
+                <td class="p-1">{{ form.property4.label() }}</td>
+                <!-- 框格 -->
+                <td class="p-1">{{ form.property4() }}</td>
+                <td>unit</td>
+            </tr>
+        </table>    
+    </fieldset>
+    
+    <fieldset class="hide">
+        <legend class="fs-5 my-0">Input</legend>
+        <table class="fs-6">
+            <tr>
+                <!-- 框格名稱 -->
+                <td class="p-1">{{ form.property1.label() }}<span>: {{ properties[0] | default("NA")}} unit</span></td>
+            </tr>
+            <tr>
+                <!-- 框格名稱 -->
+                <td class="p-1">{{ form.property2.label() }}<span>: {{ properties[1] | default("NA")}} unit</span></td>
+            </tr>
+            <tr>
+                <!-- 框格名稱 -->
+                <td class="p-1">{{ form.property3.label() }}<span>: {{ properties[2] | default("NA")}} unit</span></td>
+            </tr>
+            <tr>
+                <!-- 框格名稱 -->
+                <td class="p-1">{{ form.property4.label() }}<span>: {{ properties[3] | default("NA")}} unit</span></td>
+            </tr>
+        </table>
+    </fieldset>
+    
+    <br/>
+    {{ form.submit(value="abaqus submit",class="px-1 btn btn-outline-dark", id="abaqus-btn") }}
+</form>
+
+<br/>
+
+<div class="hide" id="abaqus-status">    
+    <p class="fw-bold my-0 fs-4" id="abaqus-status">Result</p>
+    <hr class="mt-0">
+    <p id="abaqus-job">abaqus running</p>
+    <div class="d-flex">
+        <div id="abaqus-result"></div>
+
+        <div class="d-flex flex-wrap justify-content-around " id="fem-result-chart">
+            <!-- <canvas width="400" height="350" id="k-curve"></canvas>
+            <canvas width="400" height="350" id="wheel-th"></canvas> -->
+            <div id="k-curve"></div>
+            <div id="wheel-th"></div>
+            <img src="{{ url_for('static', filename='simulation.jpg') }}" class="bg-dark float-start me-3 my-1 hide" id="simulation-result" width="400" height="350" alt="FEA Simulation"/>
+        </div> 
+    </div>
+</div>
+
+{% endblock %}
+
+<!-- 右邊狀態資訊列 -->
+{% block condition %}
+    <p class="fw-bold my-0">Abnormality detected</p>
+    <hr class="m-0">
+    <P id="wheel-repair" class="my-0 text-danger hide">建議-砂輪修整</P>
+    <P id="wheel-replace" class="my-0 text-danger hide">建議-砂輪更換</P>
+{% endblock %}
+
+{% block scripts%}
+<script>
+    const abaqusBtn= document.querySelector("#abaqus-btn");
+    const abaqusStatus = document.querySelector("#abaqus-status");
+    const abaqusResult = document.querySelector("#abaqus-result");
+    const simulationResult = document.querySelector("#simulation-result");
+    const abaqusJob = document.querySelector("#abaqus-job");
+    const property1 = document.querySelector("#property1");
+    const property2 = document.querySelector("#property2");
+    const property3 = document.querySelector("#property3");
+    const property4 = document.querySelector("#property4");
+    const property1Value = document.querySelector("#property1-value");
+    const property2Value = document.querySelector("#property2-value");
+    const property3Value = document.querySelector("#property3-value");
+    const property4Value = document.querySelector("#property4-value");
+    const kCurve = document.querySelector('#k-curve');
+    const wheelTh = document.querySelector('#wheel-th');
+    const wheelrepair = document.querySelector("#wheel-repair");
+    const wheelreplace = document.querySelector("#wheel-replace");
+
+    class Chart {
+        constructor(div,ylabel,name,thresholdValue) {
+            this.div = div;
+            this.ylabel = ylabel;
+            this.name = name
+            this.thresholdValue = thresholdValue;
+            this.plot([], [], this.thresholdValue);
+        }
+
+        plot(x, y, alert) {
+            let trace1 = {
+                x: x,
+                y: y,
+                type: 'scatter',
+                mode: 'lines+markers',
+                name: this.name,
+                marker: {
+                    color: 'rgb(75, 192, 192)',
+                    opacity: 0.5,
+                },
+                // fill: 'tonexty'
+            };
+
+            let trace2 = {
+                x: x,
+                y: Array(x.length).fill(alert),
+                alert: alert,
+                type: 'scatter',
+                mode: 'lines',
+                name: 'threshold',
+                marker: {
+                    color: 'rgba(230, 50, 50, 0.8)',
+                    opacity: 0.5,
+                }
+            };
+
+            let layout = {
+                autosize: false,
+                width: 400,
+                height: 350,
+                hovermode: "closest",
+                margin: {
+                    l: 50,
+                    r: 0,
+                    b: 50,
+                    t: 50,
+                    pad: 4 
+                },
+                xaxis: {
+                    title: 'process'
+                },
+                yaxis: {
+                    title: this.ylabel
+                },
+                legend: {
+                    x: 0.2,
+                    y: 1.1,
+                    orientation: "h",
+                },
+                font: {
+                    size: 14
+                }
+            };
+
+            let data = [trace1, trace2];
+            Plotly.newPlot(this.div, data, layout);
+        }
+
+        update(x, y) {
+            Plotly.extendTraces(this.div, { x: [[x]], y: [[y]] }, [0]);
+            Plotly.extendTraces(this.div, { x: [[x]], y: [[this.thresholdValue]] }, [1]);
+        }
+    }
+
+
+    let step = {{status | default(0)}};
+    const maxStep = 8;
+    let th = 0;
+
+    const kchart = new Chart(kCurve, 'k-value', 'grinder', 5);
+    const wheelThChart = new Chart(wheelTh, 'thickness consumption(mm)', 'grinder wheel', 23);
+
+    document.querySelector("#abaqus-btn").addEventListener("click", function() {
+        if (property1.value && property2.value && property3.value && property4.value) {
+            abaqusJob.textContent = "abaqus started running";
+        }   
+    });
+    
+    let operation = {{operation | tojson}};
+    const requestOptions = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(operation)
+    };
+
+    if (step != 0) {
+        abaqusStatus.classList.toggle("hide", false);
+        abaqusJob.textContent = "abaqus running";
+        abaqusLoop(step);
+    }
+
+    function sendAbaqusRequest(step) {
+        // let div = document.createElement("div");
+        let currStep = document.createElement("p");
+        let kvalue = document.createElement("span")
+        currStep.textContent = `Step ${step}/${maxStep}`;
+        kvalue.textContent = ` - k1: ${Math.round(operation.k1*100)/100} - k2: ${Math.round(operation.k2*100)/100}`;
+
+        // update k chart
+        kchart.update(step,operation.k1);
+
+        // updata th chart
+        th += Math.round(operation.k1*100)/200;
+        wheelThChart.update(step,th);
+
+        // abnormal detect
+        if (operation.k1 <= kchart.thresholdValue) {
+            wheelrepair.classList.toggle("hide", false);
+        }
+        else {
+            wheelrepair.classList.toggle("hide", true);
+        }
+
+        if (th >= wheelThChart.thresholdValue) {
+            wheelreplace.classList.toggle("hide", false);
+        }
+        else {
+            wheelreplace.classList.toggle("hide", true);
+        }
+        
+        // div.classList.add("m-0")
+        currStep.append(kvalue);
+        abaqusResult.append(currStep);
+
+        return fetch("/run-abaqus", requestOptions)
+        .then(response => response.json())
+        .then(data => {
+            console.log(`step-${step} finished`);
+            stepData = {
+                step: step,
+                data: {
+                    k1: data.k1,
+                    k2: data.k2
+                } 
+            }
+            return stepData;
+        });
+        }
+
+    function abaqusLoop(step) {
+        sendAbaqusRequest(step)
+        .then(stepData => {
+            let step = stepData.step;
+            if (step == maxStep) {
+                console.log("completed");
+                abaqusJob.textContent = "abaqus job completed";
+                // simulationResult.classList.toggle("hide", false);
+            }
+            else {
+                step++;
+                operation = stepData.data;
+                requestOptions.body = JSON.stringify(stepData.data);
+                abaqusLoop(step);
+            }
+        })
+    }
+</script>
+{% endblock %}

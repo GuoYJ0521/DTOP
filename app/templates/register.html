@@ -1,0 +1,31 @@
+{% extends "base_index.html" %}
+
+{% block content %}
+
+<div class="h-login d-flex justify-content-center align-items-center">
+    <form action="/register" method="POST">
+        <div class="d-flex flex-column w-login gap-2">
+            <div>
+                <div class="m-0 fw-bold">{{ form.username.label() }}</div>
+                <div class="m-0">{{ form.username(class="w-login") }}</div>
+            </div>
+            
+            <div>
+                <div class="m-0 fw-bold">{{ form.email.label() }}</div>
+                <div class="m-0">{{ form.email(class="w-login") }}</div>
+            </div>
+            
+            
+            <div>
+                <div class="m-0 fw-bold">{{ form.password.label() }}</div>
+                <div class="m-0">{{ form.password(class="w-login") }}</div>
+            </div>
+            
+            <div>{{ form.submit(class="px-1 btn btn-outline-dark", id="login-btn") }}</div>       
+        </div>
+    </form>
+</div>
+
+{% endblock %}
+{% block scripts %}
+{% endblock %}

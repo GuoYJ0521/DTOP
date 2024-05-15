@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block nav %}
+    {%for ml in machine_list%}
+    <li class="nav-item dropdown mx-2">
+        <a class="nav-link dropdown-toggle text-dark rounded hover-b" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">{{ml.machine}}</a>
+        <ul class="dropdown-menu bg-p position-absolute w100p">
+            {%for machine in machines_format[ml.id]%}
+            <li><a class="dropdown-item rounded hover-b text-center" href="/machine/{{machine.id}}">{{machine.name}}</a></li>
+            {%endfor%}
+        </ul>
+    </li>
+    {%endfor%} 
+{% endblock %}  
+
+{% block content %}
+<!-- 中間資訊列 -->
+<div class="col-8 gy-5 fs-5 pe-5">
+</div>
+{% endblock %}
+
+{% block scripts%}
+<script></script>
+{% endblock %}
