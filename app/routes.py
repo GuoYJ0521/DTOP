@@ -1,8 +1,7 @@
 from flask import render_template, jsonify, url_for, redirect, flash
-from app import app, mail, login
+from app import app
 from app.dt_controller.resData import *
-from flask_mail import Message
-from flask_login import login_user, current_user, login_required, logout_user
+from flask_login import login_user, login_required, logout_user
 
 # index
 @app.route("/")
@@ -40,18 +39,7 @@ def fem():
 # register
 @app.route("/register", methods=['GET', 'POST'])
 def register():
-    form = FormRegister()
-    if request.method == 'POST':
-        user = User(
-            name = request.form['username'],
-            email = request.form['email'],
-            pwd = request.form['password']
-        )
-        db.session.add(user)
-        db.session.commit()
-        form.username.data=''
-        form.email.data=''
-
+    form = form_register()
     return render_template("register.html", form=form, errors=form.errors)
 
 # api
@@ -77,36 +65,14 @@ def run_abaqus_api():
 # mailtrap
 @app.route("/message", methods=["POST"])
 def message():
-    msg_title = 'DT alert'
-    #  寄件者，若參數有設置就不需再另外設置
-    msg_sender = 'mailtrap@demomailtrap.com'
-    #  收件者，格式為list，否則報錯
     msg_recipients = ['yijunguo473@gmail.com']
-    #  郵件內容
-    sensor = request.json.get('sensor')
-    location = request.json.get('location')
-    alert = request.json.get('alert')
-    msg_body = f"異常-{location}{sensor}\n建議-{alert}"
-    #  也可以使用html
-    msg = Message(msg_title,
-                  sender=msg_sender,
-                  recipients=msg_recipients)
-    msg.body = msg_body
-    #  msg.html = msg_html
-    
-    #  mail.send:寄出郵件
-    mail.send(msg)
+    mail_message(msg_recipients)
     return 'send successfully'
 
 # log infomation
 @app.route("/log", methods=["POST"])
 def log():
-    # warning = request.json.get('id')
-    sensor = request.json.get('sensor')
-    location = request.json.get('location')
-    alert = request.json.get('alert')
-    warning = f"異常-{location}{sensor} 建議-{alert}"
-    app.logger.warning(warning)
+    logging()
     return "warning"
 
 # error message
@@ -117,21 +83,7 @@ def page_not_found(e):
 # login
 @app.route("/login", methods=["POST"])
 def login():
-    email = request.form['email']
-    pwd = request.form['password']
-
-    user = db.session.query(User).filter_by(email=email).first()
-    if user:
-        # check pawsseord
-        if user.check_password(pwd):
-            login_user(user, True)
-            return redirect(url_for("index"))
-        else:
-            flash("Wrong Email or Password")
-            return redirect(url_for("index"))
-    else:
-            flash("Wrong Email or Password")
-            return redirect(url_for("index"))
+    return form_login()
 
 # logout 
 @app.route('/logout')

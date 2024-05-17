@@ -1,5 +1,8 @@
 from app.models import *
-from flask import request
+from app import app, mail
+from flask_mail import Message
+from flask import request, flash, redirect, url_for
+from flask_login import login_user
 # import tensorflow as tf
 # from tensorflow.keras.models import load_model
 import time
@@ -127,3 +130,65 @@ def abaqus_sumit():
         "k2": float(k2-2)*0.8+2
     }
     return data
+
+# register
+def form_register():
+    form = FormRegister()
+    if request.method == 'POST':
+        user = User(
+            name = request.form['username'],
+            email = request.form['email'],
+            pwd = request.form['password']
+        )
+        db.session.add(user)
+        db.session.commit()
+    return form
+
+# login
+def form_login():   
+    email = request.form['email']
+    pwd = request.form['password']
+    
+    if 'remember_me' in request.form:
+        remember_me = True
+    else:
+        remember_me = False
+
+    user = db.session.query(User).filter_by(email=email).first()
+    if user:
+        # check pawsseord
+        if user.check_password(pwd):
+            login_user(user, remember_me)
+            return redirect(url_for("index"))
+        else:
+            flash("Wrong Email or Password")
+            return redirect(url_for("index"))
+    else:
+            flash("Wrong Email or Password")
+            return redirect(url_for("index"))
+
+# mail message 收件者，格式為list，否則報錯
+def mail_message(msg_recipients):
+    msg_title = 'DT alert'
+    msg_sender = 'mailtrap@demomailtrap.com'
+    #  郵件內容
+    sensor = request.json.get('sensor')
+    location = request.json.get('location')
+    alert = request.json.get('alert')
+    msg_body = f"異常-{location}{sensor}\n建議-{alert}"
+
+    msg = Message(msg_title,
+                  sender=msg_sender,
+                  recipients=msg_recipients)
+    msg.body = msg_body
+    
+    # 寄出郵件
+    mail.send(msg)
+
+# log message
+def logging():
+    sensor = request.json.get('sensor')
+    location = request.json.get('location')
+    alert = request.json.get('alert')
+    warning = f"異常-{location}{sensor} 建議-{alert}"
+    app.logger.warning(warning)
