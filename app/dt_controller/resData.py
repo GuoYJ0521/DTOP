@@ -170,18 +170,16 @@ def form_login():
 # mail message 收件者，格式為list，否則報錯
 def mail_message(msg_recipients):
     msg_title = 'DT alert'
-    msg_sender = 'mailtrap@demomailtrap.com'
+    msg_sender = 'yijunguo473@gmail.com'
     #  郵件內容
     sensor = request.json.get('sensor')
     location = request.json.get('location')
     alert = request.json.get('alert')
     msg_body = f"異常-{location}{sensor}\n建議-{alert}"
-
     msg = Message(msg_title,
                   sender=msg_sender,
                   recipients=msg_recipients)
     msg.body = msg_body
-    
     # 寄出郵件
     mail.send(msg)
 

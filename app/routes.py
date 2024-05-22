@@ -67,7 +67,7 @@ def run_abaqus_api():
 def message():
     msg_recipients = ['yijunguo473@gmail.com']
     mail_message(msg_recipients)
-    return 'send successfully'
+    return "send"
 
 # log infomation
 @app.route("/log", methods=["POST"])
