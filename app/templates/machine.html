@@ -265,6 +265,7 @@
             this.machineState.plot(machineStl,this.sensorStl,sensorList);
         }
 
+        // 寄送mail通知
         mailAlert(sensor,location,alert) {
             fetch(`/message`, {
                 method: 'POST',
@@ -279,6 +280,7 @@
             })
         }
 
+        // 紀錄資訊在文字文件中
         log(sensor,location,alert) {
             fetch(`/log`, {
                 method: 'POST',
@@ -486,17 +488,20 @@
     const myMachine = new Machine();
     myMachine.run();
 
+    // 顯示頁面目前位置
     window.addEventListener('scroll', function() {
         let scrollPosition = window.scrollY;
-
+        const y = document.getElementById("y");
+        y.innerHTML = scrollPosition
         Object.entries(machine["sensor_list"]).forEach(([type,channels]) => {
             const div = document.querySelector(`#${type}-data`);
             const btn = document.querySelector(`#${type}-btn`);
             const rect = div.getBoundingClientRect();
-            const top = rect.top + scrollPosition;
-            const bottom = rect.bottom + scrollPosition;
+            const top = rect.top + scrollPosition - 80;
+            const bottom = rect.bottom + scrollPosition - 80;
             if (top <= scrollPosition && bottom >= scrollPosition) {
                 console.log(type+ ' is in view');
+                console.log(top,bottom);
             }
             if (!Object.entries(channels).some(([channelId,datas])=>datas.isdanger) && (top <= scrollPosition && bottom >= scrollPosition)){
                 btn.classList.toggle('text-dark',false);
