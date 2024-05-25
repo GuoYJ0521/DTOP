@@ -1,63 +1,49 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
 import pymysql
-from flask_mqtt import Mqtt
-from flask_mail import Mail
-from flask_login import LoginManager
+from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
-import json
-
+from flask_login import LoginManager
+from flask_mail import Mail
+from flask_mqtt import Mqtt
 import logging
-# logging.basicConfig(filename='logs/app.log', format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
 
 pymysql.install_as_MySQLdb() #SQLAlchemy預設使用MySQLdb 但python3連接使用pymysql
-app = Flask(__name__)
-app.config.from_object('config.Config')  # 使用配置文件
-db = SQLAlchemy(app)
-mqtt = Mqtt(app)
-mail = Mail(app)
-bcrypt = Bcrypt(app)
-login = LoginManager(app)  
+db = SQLAlchemy()
+bcrypt = Bcrypt()
+login = LoginManager()  
 login.login_view = 'login'
+mail = Mail()
+mqtt = Mqtt()
 
-# 配置日志记录器
-handler1 = logging.FileHandler('logs/app_info.log', encoding='utf-8')  # 用于记录 INFO 级别的日志
-handler1.setLevel(logging.DEBUG)
-formatter1 = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-handler1.setFormatter(formatter1)
+def create_app():
+    app = Flask(__name__)
+    app.config.from_object("config.Config")
+    db.init_app(app)
+    bcrypt.init_app(app)
+    login.init_app(app)
+    mail.init_app(app)
+    mqtt.init_app(app)
 
-handler2 = logging.FileHandler('logs/app_error.log', encoding='utf-8')  # 用于记录 ERROR 级别的日志
-handler2.setLevel(logging.ERROR)
-formatter2 = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-handler2.setFormatter(formatter2)
+    from .main import main as main_blueprint
+    from .cad import cad as cad_blueprint
+    from .fea import fea as fea_blueprint
+    app.register_blueprint(main_blueprint)
+    app.register_blueprint(cad_blueprint, url_prefix="/cad")
+    app.register_blueprint(fea_blueprint, url_prefix="/fem")
 
-app.logger.setLevel(logging.WARNING)
-app.logger.addHandler(handler1)
-app.logger.addHandler(handler2)
+    # 配置紀錄日誌
+    handler1 = logging.FileHandler('logs/app_info.log', encoding='utf-8')  # INFO級別
+    handler1.setLevel(logging.DEBUG)
+    formatter1 = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+    handler1.setFormatter(formatter1)
 
-# mqtt listening
-@mqtt.on_connect()
-def handle_connect(client, userdata, flags, rc):
-    try:
-        mytopic = 'grinder/#'
-        mqtt.subscribe(topic=mytopic)
-        print(f"[mqtt] has listen topic {mytopic}")
-    except Exception as e:
-        print("Error:", e)
+    handler2 = logging.FileHandler('logs/app_error.log', encoding='utf-8')  # ERROR級別
+    handler2.setLevel(logging.ERROR)
+    formatter2 = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+    handler2.setFormatter(formatter2)
 
-from app.models import Channel
-@mqtt.on_message()
-def handle_message(client, userdata, message):
-    datas = json.loads(message.payload.decode())
-    try:
-        print("[mqtt] recieved data")
-        new_message = Channel(id=float(datas["id"]),mean=float(datas["mean"]), rms=float(datas["rms"]), std=float(datas["std"]), fft_1=float(datas["fft_1"]),
-                               fft_2=float(datas["fft_2"]), fft_3=float(datas["fft_3"]), fft_4=float(datas["fft_4"]), fft_5=float(datas["fft_5"]),
-                                 fft_6=float(datas["fft_6"]), fft_7=float(datas["fft_7"]), fft_8=float(datas["fft_8"]), time=datas["time"])
-        with app.app_context():
-            db.session.add(new_message)
-            db.session.commit()
-    except Exception as e:
-        print("Error:", e) 
+    app.logger.setLevel(logging.WARNING)
+    app.logger.addHandler(handler1)
+    app.logger.addHandler(handler2)
 
-from app import routes # 導入路由
+    return app

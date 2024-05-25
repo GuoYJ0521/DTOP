@@ -5,18 +5,17 @@
 {% if not current_user.is_authenticated %}
 <div class="h-login d-flex justify-content-center align-items-center">
     
-    <form action="/login" method="POST">
+    <form action="/" method="POST">
         <div class="d-flex flex-column w-login gap-2">
 
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    <ul class="flashes li-style p-0">
-                        {% for category, message in messages %}
-                        <li class="alert alert-danger" role="alert">{{ message }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            {% endwith %}
+            <!-- flash message -->
+            {% for message in get_flashed_messages(with_categories=True) %}
+            <div class="alert alert-{{ message[0] }}">
+                <!-- 關掉btn -->
+                <button type="button" class="close-btn" data-dismiss="alert">&times;</button>
+                {{ message[1]}}
+            </div>
+            {% endfor %}
 
             <div>
                 <div class="m-0 fw-bold">{{ form.email.label() }}</div>
@@ -41,4 +40,13 @@
 
 {% endblock %}
 {% block scripts %}
+<script>
+    const btns = document.querySelectorAll(".close-btn");
+    btns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const parent = btn.parentElement;
+            parent.remove();
+        });
+    });
+</script>
 {% endblock %}

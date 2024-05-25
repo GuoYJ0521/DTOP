@@ -77,7 +77,7 @@
             <canvas width="400" height="350" id="wheel-th"></canvas> -->
             <div id="k-curve"></div>
             <div id="wheel-th"></div>
-            <img src="{{ url_for('static', filename='simulation.jpg') }}" class="bg-dark float-start me-3 my-1 hide" id="simulation-result" width="400" height="350" alt="FEA Simulation"/>
+            <!-- <img src="{{ url_for('static', filename='simulation.jpg') }}" class="bg-dark float-start me-3 my-1 hide" id="simulation-result" width="400" height="350" alt="FEA Simulation"/> -->
         </div> 
     </div>
 </div>
@@ -248,7 +248,7 @@
         currStep.append(kvalue);
         abaqusResult.append(currStep);
 
-        return fetch("/run-abaqus", requestOptions)
+        return fetch("run-abaqus", requestOptions)
         .then(response => response.json())
         .then(data => {
             console.log(`step-${step} finished`);

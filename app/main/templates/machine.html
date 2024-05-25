@@ -278,6 +278,9 @@
                     alert: alert
                 })
             })
+            .then(data => data.json())
+            .then(data => console.log(data))
+            .catch(error => console.error('Error:', error))
         }
 
         // 紀錄資訊在文字文件中
@@ -293,6 +296,9 @@
                     alert: alert
                 })
             })
+            .then(data => data.json())
+            .then(data => console.log(data))
+            .catch(error => console.error('Error:', error))
         }
 
         update() {
@@ -491,18 +497,16 @@
     // 顯示頁面目前位置
     window.addEventListener('scroll', function() {
         let scrollPosition = window.scrollY;
-        const y = document.getElementById("y");
-        y.innerHTML = scrollPosition
         Object.entries(machine["sensor_list"]).forEach(([type,channels]) => {
             const div = document.querySelector(`#${type}-data`);
             const btn = document.querySelector(`#${type}-btn`);
             const rect = div.getBoundingClientRect();
             const top = rect.top + scrollPosition - 80;
             const bottom = rect.bottom + scrollPosition - 80;
-            if (top <= scrollPosition && bottom >= scrollPosition) {
-                console.log(type+ ' is in view');
-                console.log(top,bottom);
-            }
+            // if (top <= scrollPosition && bottom >= scrollPosition) {
+            //     console.log(type+ ' is in view');
+            //     console.log(top,bottom);
+            // }
             if (!Object.entries(channels).some(([channelId,datas])=>datas.isdanger) && (top <= scrollPosition && bottom >= scrollPosition)){
                 btn.classList.toggle('text-dark',false);
                 btn.classList.toggle('viewer',true);
