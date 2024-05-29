@@ -35,7 +35,7 @@ def get_machines_data():
 @login_required
 def machine_info(machine, machine_id):
     curr_machine = get_machine_sensor(machine_id)
-    return render_template("machine.html",machine=machine, curr_machine=curr_machine)
+    return render_template("machine.html",machine=machine, curr_machine=curr_machine, user=current_user)
 
 # log infomation
 @main.route("/log", methods=["POST"])

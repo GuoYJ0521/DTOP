@@ -5,10 +5,12 @@
     --icon-edge: 30px;
     --icon-left: calc(var(--edge-width-left) - var(--icon-edge));
     --icon-right: calc(var(--edge-width-right) - var(--icon-edge));
-    --edge-shrink-size: 40px;
-    --dege-width-shrink-left: calc(var(--edge-shrink-size) - var(--edge-width-left));
-    --dege-width-shrink-right: calc(var(--edge-shrink-size) - var(--edge-width-right));
-    --icon-position-left: 210px;
+    /* 剩下寬度 */
+    --edge-shrink-size-left: 60px; 
+    --edge-shrink-size-right: 40px;
+    --dege-width-shrink-left: calc(var(--edge-shrink-size-left) - var(--edge-width-left)); 
+    --dege-width-shrink-right: calc(var(--edge-shrink-size-right) - var(--edge-width-right));
+    --icon-position-left: 180px;
     --login-height: calc(100vh - 68px)
 }
 
@@ -98,13 +100,13 @@ legend {
 #container-left {
     width: var(--edge-width-left);
     min-height: 100%;
-    transition: 1s;
+    /* transition: 1s; */
 }
 
 #container-right {
     width: var(--edge-width-right);
     min-height: 100%;
-    transition: 1s;
+    /* transition: 1s; */
 }
 
 .min-h-100 {
@@ -164,6 +166,11 @@ legend {
 .close-btn {
     border-style: none;
     background-color: transparent;
+}
+
+.icon {
+    position: relative;
+    left: var(--icon-position-left);
 }
 
 /* responsive */
