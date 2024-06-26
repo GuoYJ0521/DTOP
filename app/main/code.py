@@ -39,7 +39,7 @@ def get_machine_sensor(machine_id):
               "work_piece": curr_machine.work_piece,
               "cutting_tool": curr_machine.cutting_tool,
               "sensor_list": sensor_list,
-              "stl": "grinder1.STL",
+              "stl": "grinder.STL",
               "sensor_stl": "sensor.STL"
               }
     return result

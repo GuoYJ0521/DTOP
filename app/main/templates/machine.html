@@ -22,7 +22,7 @@
             <div id="curr_current"></div>
         </div> -->
         <div>
-            <p class="text-center">當前碳排</p>
+            <!-- <p class="text-center">當前碳排</p> -->
             <div id="curr_co2"></div>
         </div>
         
@@ -96,11 +96,14 @@
     const machine = {{curr_machine | tojson | safe }};
     const dataProcessing = ["mean", "rms", "std"];
     const scene = new THREE.Scene();   
-    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 10000);
     const canvas = document.getElementById("machine-condition");
     const renderer = new THREE.WebGLRenderer({ canvas });
     const curr_guage = document.querySelector("#curr_current");
     const curr_co2 = document.querySelector("#curr_co2");
+    // 添加環境光
+    const ambientLight = new THREE.AmbientLight(0x404040); // 柔和的白光
+    scene.add(ambientLight);
     console.log(machine);
 
     class Machine {
@@ -110,7 +113,7 @@
         run() {
             this.controller.btnToPosition();
             this.controller.plotChart();
-            this.controller.plotGuage(32,10)
+            this.controller.plotGuage(32,143)
             this.controller.drawMachineState();
             this.controller.update();
         }
@@ -181,6 +184,7 @@
                             Plotly.redraw(div);
                             this.isdanger(type,channel);
                             this.btnAlert(type,channels);
+                            this.abnormalAlert(type,channels); 
                         }        
                     })
                     .catch(error => {
@@ -192,7 +196,9 @@
 
         plotGuage(curr_value,acc_value) {
             // this.guage.plot(curr_value,curr_guage)
-            this.guage.plot(acc_value,curr_co2)
+            let time = ['11:07:17','11:08:17','11:09:17','11:10:17','11:11:17']
+            let data = [10,11,12,10,10]
+            this.guage.plot(time,data,curr_co2)
         }
 
         btnToPosition() {
@@ -209,28 +215,34 @@
         isdanger(sensorType,channelId) {
             let channelData = this.machine.sensor_list[sensorType][channelId];
             let lastData = channelData.data[channelData.data.length-1];
-            if (this.dataProcessing.some(dataProcess=>lastData[dataProcess] >= channelData[`safelimit_${dataProcess}`])) {
-                if (!channelData.isdanger) {
-                    this.log(sensorType,channelData.location,"修整砂輪")
-                    this.mailAlert(sensorType,channelData.location,"修整砂輪")
-                }
-                channelData.isdanger = true;
-                if (!channelData.material) {
-                    channelData.material = this.machineState.dangerMaterial();
+            if (lastData!=null) {
+                if (this.dataProcessing.some(dataProcess=>lastData[dataProcess] >= channelData[`safelimit_${dataProcess}`])) {
+                    if (!channelData.isdanger) {
+                        this.log(sensorType,channelData.location,"修整砂輪")
+                        this.mailAlert(sensorType,channelData.location,"修整砂輪")
+                    }
+                    channelData.isdanger = true;
+                    if (!channelData.material) {
+                        channelData.material = this.machineState.dangerMaterial();
+                    }
+                    else {
+                        channelData.material.color.set("red");
+                    }
                 }
                 else {
-                    channelData.material.color.set("red");
+                    channelData.isdanger = false;
+                    if (!channelData.material) {
+                        channelData.material = this.machineState.safeMaterial();
+                    }
+                    else {
+                        channelData.material.color.set("green");
+                    }
                 }
             }
             else {
-                channelData.isdanger = false;
-                if (!channelData.material) {
-                    channelData.material = this.machineState.safeMaterial();
-                }
-                else {
-                    channelData.material.color.set("green");
-                }
+                channelData.material = this.machineState.safeMaterial();
             }
+            
         }
 
         // alerting by changing btn animate
@@ -304,7 +316,7 @@
         update() {
             setInterval(()=>{
                 this.updateChart()
-            },3000)
+            },1000)
         }
     }
 
@@ -358,6 +370,8 @@
                 },
                 yaxis: {
                     title: `${title}-value`,    
+                    // range: [0, 100],
+                    rangemode: "tozero"
                 },
                 title: {
                     text:title,
@@ -385,25 +399,94 @@
         }
     }
 
-    class Guage {
-        plot(value, div) {
-            let data = [
-                {
-                    // domain: { x: [0, 1], y: [0, 1] },
-                    // title: { text: "Speed" },
-                    value: value,
-                    type: "indicator",
-                    mode: "gauge+number",
-                    // gauge:{axis: { range: [null, 100], tickwidth: 1, tickcolor: "darkblue"}},
-                }
-            ];
+    // class Guage {
+    //     plot(value, div) {
+    //         let data = [
+    //             {
+    //                 // domain: { x: [0, 1], y: [0, 1] },
+    //                 // title: { text: "Speed" },
+    //                 value: value,
+    //                 type: "indicator",
+    //                 mode: "gauge+number",
+    //                 gauge: {
+    //                     axis: { 
+    //                         range: [null, 300],
+    //                         // tickvals: [0, 50, 100, 150, 200, 250, 300],
+    //                         // ticktext: ['0', '50', '100', '150', '200', '250', '300']
+    //                     },
+    //                     bar: { color: "black" },
+    //                     steps: [
+    //                         { range: [0, 100], color: "green" },
+    //                         { range: [100, 200], color: "yellow" },
+    //                         { range: [200, 300], color: "red" }
+    //                     ]
+    //                 }
+    //             }
+    //         ];
 
-            var layout = { 
-                width: 150, 
-                height: 150, 
-                margin: { l: 0, r:0, t: 0, b: 0}
+    //         var layout = { 
+    //             width: 150, 
+    //             height: 150, 
+    //             margin: { l: 0, r:0, t: 0, b: 0}
+    //         };
+    //         Plotly.newPlot(div, data, layout);
+    //     }
+    // }
+    class Guage {
+        plot(x,y,chart) {
+            // const chart = document.querySelector(`#${div}`);
+            let trace1 = {
+                x: x,
+                y: y,
+                type: 'scatter',
+                mode: 'lines+markers',
+                marker: {
+                    color: 'rgb(75, 192, 192)',
+                    opacity: 0.5,
+                },
+                // fill: 'tonexty'
             };
-            Plotly.newPlot(div, data, layout);
+            
+            let layout = {
+                autosize: false,
+                width: 300,
+                height: 200,
+                hovermode: "closest",
+                margin: {
+                    l: 50,
+                    r: 0,
+                    b: 40,
+                    t: 0,
+                    pad: 0
+                },
+                xaxis: {
+                    title: 'time',
+                    tickmode: 'auto',  // 自動選擇刻度模式
+                    nticks: 4
+                },
+                yaxis: {
+                    title: "carbon emission",    
+                    // range: [0, 100],
+                    rangemode: "tozero"
+                },
+                title: {
+                    font: {
+                        size: 18
+                    }
+                },
+                legend: {
+                    x: 0.2,
+                    y: 1.1,
+                    orientation: "h",
+                },
+                font: {
+                    size: 14
+                }
+            };
+
+            let data = [trace1];
+            Plotly.newPlot(chart, data, layout);
+
         }
     }
 
@@ -440,7 +523,7 @@
                 const material = new THREE.MeshBasicMaterial({
                     color: "White",
                     transparent: true,
-                    opacity: 0.3
+                    opacity: 0.2
                 })
 
                 const mesh = new THREE.Mesh(geometry, material);
@@ -450,7 +533,7 @@
                 boundingBox.getCenter(center);
 
                 const controls = new CustomOrbitControls(this.camera, this.renderer.domElement, center);
-                this.camera.position.set(0, 0, center.z * 8);
+                this.camera.position.set(0, 0, center.z * 4.5);
                 this.renderer.render(this.scene, this.camera);
 
                 this.animate(controls);
