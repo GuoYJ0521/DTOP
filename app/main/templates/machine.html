@@ -178,8 +178,12 @@
                             // update chart date
                             div.data[0].x = allTime;
                             div.data[0].y = processdata;
+                            // update upper bound
                             div.data[1].x = allTime;
                             div.data[1].y = Array(processdata.length).fill(datas[`safelimit_${process}`]);
+                            // update lower bound
+                            div.data[2].x = allTime;
+                            div.data[2].y = Array(processdata.length).fill(20);
 
                             Plotly.redraw(div);
                             this.isdanger(type,channel);
@@ -338,6 +342,7 @@
                 // fill: 'tonexty'
             };
 
+            // upper bound
             let trace2 = {
                 x: x,
                 y: Array(x.length).fill(safelimit),
@@ -345,11 +350,29 @@
                 type: 'scatter',
                 mode: 'lines',
                 name: 'threshold',
+                legendgroup: 'threshold',
                 marker: {
                     color: 'rgba(230, 50, 50, 0.8)',
                     opacity: 0.5,
                 }
             };
+
+            // loewer bound
+            let trace3 = {
+                x: x,
+                y: Array(x.length).fill(20),
+                alert: alert,
+                type: 'scatter',
+                mode: 'lines',
+                // trace2 trace3 share the same name
+                legendgroup: 'threshold',
+                showlegend: false,
+                marker: {
+                    color: 'rgba(230, 50, 50, 0.8)',
+                    opacity: 0.5,
+                }
+            };
+
 
             let layout = {
                 autosize: false,
@@ -389,7 +412,7 @@
                 }
             };
 
-            let data = [trace1, trace2];
+            let data = [trace1, trace2, trace3];
             Plotly.newPlot(chart, data, layout);
         }
 

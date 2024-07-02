@@ -90,3 +90,16 @@ class Channel(db.Model):
 
     def __repr__(self):
         return f'{self.channel, self.mean, self.rms, self.std, self.fft_1, self.fft_2, self.fft_3, self.fft_4, self.fft_5, self.fft_6, self.fft_7, self.fft_8, self.time}'
+    
+class WorkingData(db.Model):
+    __tablename__ = 'working_data'
+    id = db.Column(db.Integer, primary_key=True)
+    machine_id = db.Column(db.Integer)
+    x = db.Column(db.Float)
+    y = db.Column(db.Float)
+    z = db.Column(db.Float)
+    speed = db.Column(db.Float)
+    time = db.Column(db.DateTime)
+
+    def __repr__(self):
+        return f'{self.machine_id, self.x, self.y, self.z, self.speed}'
