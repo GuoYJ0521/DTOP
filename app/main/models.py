@@ -1,12 +1,13 @@
 from flask_login import UserMixin
 from app import db, bcrypt, login
+from sqlalchemy import DECIMAL
 
 class User(db.Model, UserMixin):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(30))
     name = db.Column(db.String(30))
-    pwd_hash = db.Column(db.String(30))
+    pwd_hash = db.Column(db.String(128))
 
     @property
     def pwd(self):
@@ -19,10 +20,11 @@ class User(db.Model, UserMixin):
 
     # 檢查密碼
     def check_password(self, password):
+        print(password, self.pwd_hash)
         return bcrypt.check_password_hash(self.pwd_hash, password)
 
     def __repr__(self):
-        return f'{self.id, self.email, self.name, self.pwd_hash}'
+        return f'{self.email, self.name, self.pwd_hash}'
 
 @login.user_loader
 def load_user(user_id):
@@ -59,7 +61,7 @@ class Sensors(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     sensor_id = db.Column(db.Integer,db.ForeignKey(SensorList.id))
     machine = db.Column(db.Integer)
-    channel_id = db.Column(db.Integer)
+    channel_id = db.Column(DECIMAL(2, 1))
     location = db.Column(db.String(30))
     location_x = db.Column(db.Float)
     location_y = db.Column(db.Float)
@@ -74,7 +76,7 @@ class Sensors(db.Model):
 class Channel(db.Model):
     __tablename__ = 'channel'
     id = db.Column(db.Integer, primary_key=True)
-    channel = db.Column(db.Float)
+    channel = db.Column(DECIMAL(2, 1))
     mean = db.Column(db.Float)
     rms = db.Column(db.Float)
     std = db.Column(db.Float)
