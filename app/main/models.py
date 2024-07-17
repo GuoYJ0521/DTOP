@@ -36,6 +36,12 @@ class MachineList(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     machine = db.Column(db.String(30))
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'machine': self.machine
+        }
+
 class Machines(db.Model):
     __tablename__ = 'machines'
     id = db.Column(db.Integer, primary_key=True)
@@ -45,6 +51,17 @@ class Machines(db.Model):
     work_piece = db.Column(db.String(30))
     cutting_tool = db.Column(db.String(30))
     machine_type = db.Column(db.String(30))
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'machine_id': self.machine_id,
+            'location': self.location,
+            'work_piece': self.work_piece,
+            'cutting_tool': self.cutting_tool,
+            'machine_type': self.machine_type
+        }
 
 # sensor list
 class SensorList(db.Model):
@@ -93,15 +110,19 @@ class Channel(db.Model):
     def __repr__(self):
         return f'{self.channel, self.mean, self.rms, self.std, self.fft_1, self.fft_2, self.fft_3, self.fft_4, self.fft_5, self.fft_6, self.fft_7, self.fft_8, self.time}'
     
-class WorkingData(db.Model):
-    __tablename__ = 'working_data'
-    id = db.Column(db.Integer, primary_key=True)
-    machine_id = db.Column(db.Integer)
-    x = db.Column(db.Float)
-    y = db.Column(db.Float)
-    z = db.Column(db.Float)
-    speed = db.Column(db.Float)
-    time = db.Column(db.DateTime)
-
-    def __repr__(self):
-        return f'{self.machine_id, self.x, self.y, self.z, self.speed}'
+    def to_dict(self):
+        return {
+            "channel": self.channel,
+            "mean": self.mean,
+            "rms": self.rms,
+            "std": self.std,
+            "fft_1": self.fft_1,
+            "fft_2": self.fft_2,
+            "fft_3": self.fft_3,
+            "fft_4": self.fft_4,
+            "fft_5": self.fft_5,
+            "fft_6": self.fft_6,
+            "fft_7": self.fft_7,
+            "fft_8": self.fft_8,
+            "time": self.time
+        }

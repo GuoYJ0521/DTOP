@@ -39,7 +39,8 @@ def create_app():
         else:
             app.logger.error(f"[mqtt] Connection failed with result code {rc}")
 
-    from .main.models import Channel, WorkingData
+    from .main.models import Channel
+    from .cad.models import WorkingData
     @mqtt.on_message()
     def handle_message(client, userdata, message):
         topic = message.topic.split("/")[1]

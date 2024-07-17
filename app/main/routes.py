@@ -25,10 +25,20 @@ def logout():
     return redirect(url_for('main.index'))
 
 # 獲取navbar資料
-@main.route('/get_machines_data', methods=['POST'])
-def get_machines_data():
-    machine_list = get_machines()
-    return jsonify(machine_list)
+# @main.route('/get_machines_data', methods=['POST'])
+# def get_machines_data():
+#     machine_list = get_machines()
+#     return jsonify(machine_list)
+
+# machine types
+@main.route('/machines')
+def machines():
+    return get_machines()
+
+# machines
+@main.route("/machines/<int:id>")
+def machine(id):
+    return get_machines_id(id)
 
 # machine info
 @main.route("/machine/<machine>/<machine_id>")

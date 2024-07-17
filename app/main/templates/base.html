@@ -146,56 +146,50 @@
 
 <script>
     // menu for all types of machine
-    const navMenu = document.querySelector("#nav-menu")
-    function machineMenu(machines) {
-        // for all kind of machine
-        for (const machine of machines) {
-            // machine type
-            let menu = document.createElement("li");
-            let menuA = document.createElement("a");
-            // machine list for a specific type
-            let dropdown = document.createElement("ul");
+    const navMenu = document.querySelector("#nav-menu");
 
-            menu.classList.add("nav-item", "dropdown", "mx-2");
+    fetch('/machines')
+        .then(response => response.json())
+        .then(types => {
+            console.log(types)
+            types.forEach(type => {
+                let menu = document.createElement("li");
+                let menuA = document.createElement("a");
+                // machine list for a specific type
+                let dropdown = document.createElement("ul");
 
-            menuA.textContent = machine.type;
-            menuA.classList.add("nav-link","dropdown-toggle","text-dark","rounded","hover-b");
-            menuA.setAttribute("role","button");
-            menuA.setAttribute("data-bs-toggle","dropdown");
-            menuA.setAttribute("aria-expanded","false");
+                menuA.textContent = type.machine;
 
-            dropdown.classList.add("dropdown-menu", "bg-p", "position-absolute", "w100p");
-            
-            for (const machineInfo of machine.list) {
-                let li = document.createElement("li");
-                let liA = document.createElement("a");
-                liA.textContent = machineInfo.name;
-                liA.classList.add("dropdown-item", "rounded", "hover-b");
-                liA.href = `/machine/${machine.type}/${machineInfo.id}`;
-                li.append(liA);
-                dropdown.append(li);
-            }
+                // 屬性
+                menu.classList.add("nav-item", "dropdown", "mx-2");
+                menuA.classList.add("nav-link","dropdown-toggle","text-dark","rounded","hover-b");
+                menuA.setAttribute("role","button");
+                menuA.setAttribute("data-bs-toggle","dropdown");
+                menuA.setAttribute("aria-expanded","false");
+                dropdown.classList.add("dropdown-menu", "bg-p", "position-absolute", "w100p");
 
-            menu.append(menuA);
-            menu.append(dropdown);
-            navMenu.append(menu);
-        }
-    }
-    fetch('/get_machines_data', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-    })
-    .then(response => response.json())
-    .then(machines => {
-        // 在這裡處理從後端獲取的資料
-        machineMenu(machines);
-        // console.log("nav init")
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
+                // 下拉選單
+                fetch(`/machines/${type.id}`)
+                    .then(res => res.json())
+                    .then(machines =>{
+                        machines.forEach(machine => {
+                            let li = document.createElement("li");
+                            let liA = document.createElement("a");
+                            liA.textContent = machine.name;
+                            liA.classList.add("dropdown-item", "rounded", "hover-b");
+                            liA.href = `/machine/${type.machine}/${machine.id}`;
+                            li.append(liA);
+                            dropdown.append(li);
+                        }) 
+                    })
+                    .catch(error => console.error('Error:', error));
+
+                menu.append(menuA);
+                menu.append(dropdown);
+                navMenu.append(menu);
+            });
+        })
+        .catch(error => console.error('Error:', error));
 </script>
 
 {% block scripts %}

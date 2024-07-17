@@ -1,4 +1,4 @@
-from flask import request, flash, redirect, url_for, current_app
+from flask import request, flash, redirect, url_for, current_app, jsonify
 from flask_login import login_user
 from flask_mail import Message
 from app import db, mail
@@ -72,20 +72,15 @@ def get_sensor(machine_id):
         result[f"{type.type}"] = list
     return result
 
-# machine list
 def get_machines():
-    data = []
     machine_list = db.session.query(MachineList).all()
+    res = [machine.to_dict() for machine in machine_list]
+    return jsonify(res)
 
-    for ml in machine_list:
-        list = []
-        machines = db.session.query(Machines).filter(Machines.machine_id == ml.id).all()
-
-        for m in machines:
-            list.append({"name":m.name,"id":m.id})
-        data.append({"type":ml.machine, "list":list})
-
-    return data
+def get_machines_id(id):
+    machines = db.session.query(Machines).filter(Machines.machine_id == id).all()
+    res = [machine.to_dict() for machine in machines]
+    return jsonify(res)
 
 # log message
 def logging():
