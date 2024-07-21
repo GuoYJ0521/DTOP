@@ -1,0 +1,628 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <!-- Machine information -->
+    <p class="fw-bold my-0">Machine</p>
+    <hr class="mt-0">
+    <div class="overflow-hidden mb-5 d-flex flex-row flex-wrap gap-5">
+        <div class="d-flex flex-row flex-wrap">
+            <canvas class="bg-dark float-start me-3 my-1" id="machine-condition" width="300" height="200"></canvas>
+            <!-- machine information from database -->
+            <div>
+                <p class="my-1">name: {{curr_machine.name | default("NA")}}</p>
+                <p class="my-1">type: {{curr_machine.type | default("NA")}}</p>
+                <p class="my-1">location: {{curr_machine.location | default("NA")}}</p>
+                <p class="my-1">work piece: {{curr_machine.work_piece | default("NA")}}</p>
+                <p class="my-1">cutting tool: {{curr_machine.cutting_tool | default("NA")}}</p>
+                <p class="my-1">condition: working</p>
+            </div>
+        </div>
+        <!-- <div>
+            <p class="text-center">當前電流</p>
+            <div id="curr_current"></div>
+        </div> -->
+        <div>
+            <!-- <p class="text-center">當前碳排</p> -->
+            <div id="curr_co2"></div>
+        </div>
+        
+        <!-- <div id="machine-curr" class="d-flex flex-row flex-wrap justify-content-around align-content-end">
+            
+        </div> -->
+        
+    </div>
+
+    <!-- chart for each sensor -->
+    {% for type, value in curr_machine.sensor_list.items() %}
+    <div id="{{type}}-data">
+        {% if type == "ACM" %}
+            <p class="fs-5 fw-bold my-0">加速規</p>
+        {% elif type == "CC" %}
+            <p class="fs-5 fw-bold my-0">比流計</p>
+
+        {% elif type == "MIC" %}
+            <p class="fs-5 fw-bold my-0">麥克風</p>
+        {% endif %}
+        <hr class="mt-0">
+        
+        <!-- create canvas for each sensor -->
+        {% set dataProcessing = ["mean", "rms", "std"] %}
+        {% for channel,data in value.items() %}
+            <p class="fw-bold text-muted my-0">{{data.location}}</p>
+            <div class="d-flex justify-content-between flex-wrap chart-list" data-id="{{data.id}}" data-channel="{{channel}}" data-sensor="{{type}}">
+            {% for dataProcess in dataProcessing %}
+                <div id="{{type}}-{{data.id}}-{{dataProcess}}"></div>
+            {% endfor %}
+            </div>
+        {% endfor %}
+        
+    </div>
+    {% endfor %}
+{% endblock %}
+
+<!-- 右邊狀態資訊列 -->
+{% block condition %}
+    <!-- <p class="fw-bold my-0">Power Consumption</p>
+    <hr class="m-0">
+    <p class="mx-1">P=15KW</p> -->
+
+    <!-- <p class="fw-bold my-0">Carbon emissions</p>
+    <hr class="m-0">
+    <p class="mx-1">3kg/day</p> -->
+
+    <p class="fw-bold my-0">Abnormality detected</p>
+    <hr class="m-0">
+    {% for type, channels in curr_machine.sensor_list.items() %}
+        <!-- create infomation for each sensor channel -->
+        {% for channel, datas in channels.items() %}
+            {% set parts = channel.split('.') %}
+            <div class="mx-1 hide abnormal-{{type}}-{{parts[0]}}-{{parts[1]}}" data-channelid="{{channel}}">
+                <p class="my-0" data-channelid="{{channel}}">{{type}}-{{datas.location}}</p>
+                <P class="my-0 text-danger">建議-砂輪修整</P>
+            </div>        
+        {% endfor %} 
+    {% endfor %}
+{% endblock %}
+
+{% block scripts%}
+<script type="module">
+    //three.js to plot 3d chart
+    import * as THREE from 'https://cdn.skypack.dev/three@0.130.0';
+    import { OrbitControls } from 'https://cdn.skypack.dev/three@0.130.0/examples/jsm/controls/OrbitControls.js';
+    import { STLLoader } from 'https://cdn.skypack.dev/three@0.130.0/examples/jsm/loaders/STLLoader.js';
+
+    // machine information
+    const folder = {{machine | tojson | safe}}
+    const machine = {{curr_machine | tojson | safe }};
+    const dataProcessing = ["mean", "rms", "std"];
+    const scene = new THREE.Scene();   
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 10000);
+    const canvas = document.getElementById("machine-condition");
+    const renderer = new THREE.WebGLRenderer({ canvas });
+    const curr_guage = document.querySelector("#curr_current");
+    const curr_co2 = document.querySelector("#curr_co2");
+    // 添加環境光
+    const ambientLight = new THREE.AmbientLight(0x404040); // 柔和的白光
+    scene.add(ambientLight);
+    console.log(machine);
+
+    class Machine {
+        constructor() {
+            this.controller = new Controller();
+        }
+        run() {
+            this.controller.btnToPosition();
+            this.controller.plotChart();
+            this.controller.plotGuage(32,143)
+            this.controller.drawMachineState();
+            this.controller.update();
+        }
+    }
+
+    class Controller {
+        constructor() {
+            this.machine = machine;
+            this.chart = new Chart();
+            this.guage = new Guage();
+            this.machineState = new MachineState();
+            this.dataProcessing = dataProcessing;
+        }
+
+        plotChart() {
+            Object.entries(this.machine.sensor_list).forEach(([type, channels]) => {
+                Object.entries(channels).forEach(([channel, datas]) => {
+                    let sensordatas = datas.data;
+
+                    // reverse the time order
+                    sensordatas.reverse();
+                    let allTime = sensordatas.flatMap((data)=>data.time.split("T")[1]);
+                    let data = sensordatas.flatMap((data)=>data.rms);
+
+                    // plot for std, rms, mean
+                    for (const process of dataProcessing) {
+                        const div = `${type}-${datas.id}-${process}`;
+                        let data = sensordatas.flatMap((data)=>data[process]);
+                        let safelimit = datas[`safelimit_${process}`];
+                        this.chart.plot(allTime,data,safelimit,div);
+                    }
+                    
+                    this.isdanger(type,channel);
+                    this.btnAlert(type,channels);
+                    this.abnormalAlert(type,channels); 
+                })
+            }) 
+        }
+
+        updateChart() {
+            Object.entries(this.machine.sensor_list).forEach(([type, channels]) => {
+                Object.entries(channels).forEach(([channel, datas]) => {
+                    fetch(`/get_channel_data`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({id: channel})
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        datas.data = data
+                        datas.data.reverse()
+
+                        let allTime = datas.data.flatMap((data)=>data.time.split("T")[1]);
+
+                        for (const process of dataProcessing) {
+                            let div = document.querySelector(`#${type}-${datas.id}-${process}`);
+                            let processdata =  datas.data.flatMap((data)=>data[process]);
+                            let safelimit = datas[`safelimit_${process}`];
+
+                            // update chart date
+                            div.data[0].x = allTime;
+                            div.data[0].y = processdata;
+                            // update upper bound
+                            div.data[1].x = allTime;
+                            div.data[1].y = Array(processdata.length).fill(datas[`safelimit_${process}`]);
+                            // update lower bound
+                            div.data[2].x = allTime;
+                            div.data[2].y = Array(processdata.length).fill(20);
+
+                            Plotly.redraw(div);
+                            this.isdanger(type,channel);
+                            this.btnAlert(type,channels);
+                            this.abnormalAlert(type,channels); 
+                        }        
+                    })
+                    .catch(error => {
+                        console.log('Error:', error)
+                    })
+                })
+            })
+        }
+
+        plotGuage(curr_value,acc_value) {
+            // this.guage.plot(curr_value,curr_guage)
+            let time = ['11:07:17','11:08:17','11:09:17','11:10:17','11:11:17']
+            let data = [10,11,12,10,10]
+            this.guage.plot(time,data,curr_co2)
+        }
+
+        btnToPosition() {
+            for (const [key] of Object.entries(machine.sensor_list)) {
+                let btn = document.getElementById(key+"-btn");
+                let data = document.getElementById(key+"-data");
+                btn.addEventListener("click", (event) => {
+                toPosition(data);
+            });
+            }            
+        }
+
+        // check is the data in channel higher than safe limit, set the attribute of isdanger for each channel
+        isdanger(sensorType,channelId) {
+            let channelData = this.machine.sensor_list[sensorType][channelId];
+            let lastData = channelData.data[channelData.data.length-1];
+            if (lastData!=null) {
+                if (this.dataProcessing.some(dataProcess=>lastData[dataProcess] >= channelData[`safelimit_${dataProcess}`])) {
+                    if (!channelData.isdanger) {
+                        this.log(sensorType,channelData.location,"修整砂輪")
+                        this.mailAlert(sensorType,channelData.location,"修整砂輪")
+                    }
+                    channelData.isdanger = true;
+                    if (!channelData.material) {
+                        channelData.material = this.machineState.dangerMaterial();
+                    }
+                    else {
+                        channelData.material.color.set("red");
+                    }
+                }
+                else {
+                    channelData.isdanger = false;
+                    if (!channelData.material) {
+                        channelData.material = this.machineState.safeMaterial();
+                    }
+                    else {
+                        channelData.material.color.set("green");
+                    }
+                }
+            }
+            else {
+                channelData.material = this.machineState.safeMaterial();
+            }
+            
+        }
+
+        // alerting by changing btn animate
+        btnAlert(sensorType,channelsData) {
+            let btn = document.querySelector(`#${sensorType}-btn`);
+            if (Object.entries(channelsData).some(([channelId,datas])=>datas.isdanger)) {
+                btn.classList.toggle('animate-color-change',true);
+            }
+            else {
+                btn.classList.toggle('animate-color-change',false);
+            }
+        }
+
+        // if is abnormal show the abnormal text
+        abnormalAlert(sensorType,channelsData) {
+            for (const [channelId,datas] of Object.entries(channelsData)) {
+                let parts = channelId.split('.');
+                let targetText = document.querySelector(`.abnormal-${sensorType}-${parts[0]}-${parts[1]}`);
+                if (datas.isdanger) {
+                    targetText.classList.toggle("hide", false);
+                }
+                else {
+                    targetText.classList.toggle("hide", true);
+                }
+            }
+        }
+
+        drawMachineState() {
+            let machineStl = this.machine.stl;
+            let sensorStl = this.machine.sensor_srl;
+            let sensorList = this.machine.sensor_list;
+            this.machineState.plot(machineStl,this.sensorStl,sensorList);
+        }
+
+        // 寄送mail通知
+        mailAlert(sensor,location,alert) {
+            fetch(`/message`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    sensor: sensor,
+                    location: location,
+                    alert: alert
+                })
+            })
+            .then(data => data.json())
+            .then(data => console.log(data))
+            .catch(error => console.error('Error:', error))
+        }
+
+        // 紀錄資訊在文字文件中
+        log(sensor,location,alert) {
+            fetch(`/log`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    sensor: sensor,
+                    location: location,
+                    alert: alert
+                })
+            })
+            .then(data => data.json())
+            .then(data => console.log(data))
+            .catch(error => console.error('Error:', error))
+        }
+
+        update() {
+            setInterval(()=>{
+                this.updateChart()
+            },1000)
+        }
+    }
+
+    class Chart {
+        plot(x,y,safelimit,div) {
+            const chart = document.querySelector(`#${div}`);
+            const info = div.split("-");
+            const title = `${info[0]}-${info[2]}`;
+            let trace1 = {
+                x: x,
+                y: y,
+                type: 'scatter',
+                mode: 'lines+markers',
+                name: title,
+                marker: {
+                    color: 'rgb(75, 192, 192)',
+                    opacity: 0.5,
+                },
+                // fill: 'tonexty'
+            };
+
+            // upper bound
+            let trace2 = {
+                x: x,
+                y: Array(x.length).fill(safelimit),
+                alert: alert,
+                type: 'scatter',
+                mode: 'lines',
+                name: 'threshold',
+                legendgroup: 'threshold',
+                marker: {
+                    color: 'rgba(230, 50, 50, 0.8)',
+                    opacity: 0.5,
+                }
+            };
+
+            // loewer bound
+            let trace3 = {
+                x: x,
+                y: Array(x.length).fill(20),
+                alert: alert,
+                type: 'scatter',
+                mode: 'lines',
+                // trace2 trace3 share the same name
+                legendgroup: 'threshold',
+                showlegend: false,
+                marker: {
+                    color: 'rgba(230, 50, 50, 0.8)',
+                    opacity: 0.5,
+                }
+            };
+
+
+            let layout = {
+                autosize: false,
+                width: 400,
+                height: 350,
+                hovermode: "closest",
+                margin: {
+                    l: 50,
+                    r: 0,
+                    b: 50,
+                    t: 50,
+                    pad: 4 
+                },
+                xaxis: {
+                    title: 'time',
+                    tickmode: 'auto',  // 自動選擇刻度模式
+                    nticks: 4
+                },
+                yaxis: {
+                    title: `${title}-value`,    
+                    // range: [0, 100],
+                    rangemode: "tozero"
+                },
+                title: {
+                    text:title,
+                    font: {
+                        size: 18
+                    }
+                },
+                legend: {
+                    x: 0.2,
+                    y: 1.1,
+                    orientation: "h",
+                },
+                font: {
+                    size: 14
+                }
+            };
+
+            let data = [trace1, trace2, trace3];
+            Plotly.newPlot(chart, data, layout);
+        }
+
+        update(x, y) {
+            Plotly.extendTraces(this.div, { x: [[x]], y: [[y]] }, [0]);
+            Plotly.extendTraces(this.div, { x: [[x]], y: [[this.thresholdValue]] }, [1]);
+        }
+    }
+
+    // class Guage {
+    //     plot(value, div) {
+    //         let data = [
+    //             {
+    //                 // domain: { x: [0, 1], y: [0, 1] },
+    //                 // title: { text: "Speed" },
+    //                 value: value,
+    //                 type: "indicator",
+    //                 mode: "gauge+number",
+    //                 gauge: {
+    //                     axis: { 
+    //                         range: [null, 300],
+    //                         // tickvals: [0, 50, 100, 150, 200, 250, 300],
+    //                         // ticktext: ['0', '50', '100', '150', '200', '250', '300']
+    //                     },
+    //                     bar: { color: "black" },
+    //                     steps: [
+    //                         { range: [0, 100], color: "green" },
+    //                         { range: [100, 200], color: "yellow" },
+    //                         { range: [200, 300], color: "red" }
+    //                     ]
+    //                 }
+    //             }
+    //         ];
+
+    //         var layout = { 
+    //             width: 150, 
+    //             height: 150, 
+    //             margin: { l: 0, r:0, t: 0, b: 0}
+    //         };
+    //         Plotly.newPlot(div, data, layout);
+    //     }
+    // }
+    class Guage {
+        plot(x,y,chart) {
+            // const chart = document.querySelector(`#${div}`);
+            let trace1 = {
+                x: x,
+                y: y,
+                type: 'scatter',
+                mode: 'lines+markers',
+                marker: {
+                    color: 'rgb(75, 192, 192)',
+                    opacity: 0.5,
+                },
+                // fill: 'tonexty'
+            };
+            
+            let layout = {
+                autosize: false,
+                width: 300,
+                height: 200,
+                hovermode: "closest",
+                margin: {
+                    l: 50,
+                    r: 0,
+                    b: 40,
+                    t: 0,
+                    pad: 0
+                },
+                xaxis: {
+                    title: 'time',
+                    tickmode: 'auto',  // 自動選擇刻度模式
+                    nticks: 4
+                },
+                yaxis: {
+                    title: "carbon emission",    
+                    // range: [0, 100],
+                    rangemode: "tozero"
+                },
+                title: {
+                    font: {
+                        size: 18
+                    }
+                },
+                legend: {
+                    x: 0.2,
+                    y: 1.1,
+                    orientation: "h",
+                },
+                font: {
+                    size: 14
+                }
+            };
+
+            let data = [trace1];
+            Plotly.newPlot(chart, data, layout);
+
+        }
+    }
+
+    class CustomOrbitControls extends OrbitControls {
+        constructor(camera, domElement, target) {
+            super(camera, domElement);
+
+            //define model translation rotation
+            this.enablePan = false;
+            this.maxPolarAngle = Math.PI / 2.5;
+            this.minPolarAngle = Math.PI / 2.5;
+            this.target = target;
+        }
+    }
+
+    class MachineState {
+        constructor() {
+            this.machineLoader = new STLLoader();
+            this.sensorLoader = new STLLoader();
+            this.scene = scene
+            this.camera = camera;
+            this.renderer = renderer;
+        }
+
+        animate(controls) {
+            requestAnimationFrame(() => this.animate(controls));
+            controls.update();
+            this.renderer.render(this.scene, this.camera);
+        }
+
+        plot(machineStl,sensorStl,sensorList) {
+            let stlUrl = `/static/stl/${folder}/${machineStl}`;
+            this.machineLoader.load(stlUrl,(geometry) => {
+                const material = new THREE.MeshBasicMaterial({
+                    color: "White",
+                    transparent: true,
+                    opacity: 0.2
+                })
+
+                const mesh = new THREE.Mesh(geometry, material);
+                this.scene.add(mesh);
+                const boundingBox = new THREE.Box3().setFromObject(mesh);
+                const center = new THREE.Vector3();
+                boundingBox.getCenter(center);
+
+                const controls = new CustomOrbitControls(this.camera, this.renderer.domElement, center);
+                this.camera.position.set(0, 0, center.z * 4.5);
+                this.renderer.render(this.scene, this.camera);
+
+                this.animate(controls);
+
+                Object.entries(sensorList).forEach(([sensorType,channelDatas]) => {
+                    Object.entries(channelDatas).forEach(([channelId,sensorData]) => {
+                        this.plotSensor(sensorStl,sensorData);
+                        // console.log(sensorData)
+                    })
+                })
+            })
+        }
+
+        plotSensor(sensorStl,sensorData) {
+            let stlUrl = '/static/stl/sensor.STL';
+            this.sensorLoader.load(stlUrl, (geometry)=> {
+                sensorData.mesh = new THREE.Mesh(geometry, sensorData.material);
+                sensorData.mesh.position.x = sensorData.location_x;
+                sensorData.mesh.position.y = sensorData.location_y;
+                sensorData.mesh.position.z = sensorData.location_z;
+                this.scene.add(sensorData.mesh);
+            })  
+        }
+
+        safeMaterial() {
+            return new THREE.MeshBasicMaterial({
+                color: "green",
+                transparent: false,
+            });
+        }
+
+        dangerMaterial () {
+            return  new THREE.MeshBasicMaterial({
+                color: "red",
+                transparent: false,
+            });
+        }
+
+    }
+
+    const myMachine = new Machine();
+    myMachine.run();
+
+    // 顯示頁面目前位置
+    window.addEventListener('scroll', function() {
+        let scrollPosition = window.scrollY;
+        Object.entries(machine["sensor_list"]).forEach(([type,channels]) => {
+            const div = document.querySelector(`#${type}-data`);
+            const btn = document.querySelector(`#${type}-btn`);
+            const rect = div.getBoundingClientRect();
+            const top = rect.top + scrollPosition - 80;
+            const bottom = rect.bottom + scrollPosition - 80;
+            // if (top <= scrollPosition && bottom >= scrollPosition) {
+            //     console.log(type+ ' is in view');
+            //     console.log(top,bottom);
+            // }
+            if (!Object.entries(channels).some(([channelId,datas])=>datas.isdanger) && (top <= scrollPosition && bottom >= scrollPosition)){
+                btn.classList.toggle('text-dark',false);
+                btn.classList.toggle('viewer',true);
+            }
+            else {
+                btn.classList.toggle('text-dark',true);
+                btn.classList.toggle('viewer',false);
+            }
+        })
+    });
+
+</script>
+{% endblock %}

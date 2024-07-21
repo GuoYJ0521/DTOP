@@ -77,9 +77,36 @@ def get_machines():
     res = [machine.to_dict() for machine in machine_list]
     return jsonify(res)
 
+# 所有機台資訊
 def get_machines_id(id):
     machines = db.session.query(Machines).filter(Machines.machine_id == id).all()
     res = [machine.to_dict() for machine in machines]
+    return jsonify(res)
+
+# 單一機台資訊
+def get_machine_id(id):
+    machine = db.session.query(Machines).filter(Machines.id == id).first()
+    res = machine.to_dict()
+    return jsonify(res)
+
+# 所有sensor
+def get_sensors():
+    sensors = db.session.query(SensorList).all()
+    res = [sensor.to_dict() for sensor in sensors]
+    return jsonify(res)
+
+# 機台所有sensor
+def get_machine_sensors(id):
+    sensors = db.session.query(Sensors).filter(Sensors.machine == id).all()
+    res = [sensor.to_dict() for sensor in sensors]
+    return jsonify(res)
+
+# channel 資料
+def get_channel_datas(id):
+    datas = db.session.query(Channel).filter(Channel.channel==id).order_by(Channel.time.desc()).limit(30).all()
+    # res = [data.to_dict() for data in datas]
+    res = [data.to_dict() for data in reversed(datas)]
+
     return jsonify(res)
 
 # log message

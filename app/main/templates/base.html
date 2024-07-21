@@ -51,19 +51,19 @@
                         <p class="fs-5 fw-bold my-0">Sensorlist</p>
                         <ul class="list-group w-100 mx-auto ">
                             <li class="list-unstyled p-0">
-                                <a id="ACM-btn" class="rounded hover-b d-block ps-1 pe-3 py-1 text-dark text-decoration-none sensor-btn d-flex align-items-center">
+                                <a id="ACM-btn" class="rounded hover-b d-block ps-1 pe-3 py-1 text-dark text-decoration-none sensor-btn d-flex align-items-center" data-sensor-type-id="1">
                                     <img src="{{ url_for('static', filename='icons/accelerometer.jpg') }}" class="float-start me-2 bg-white" height="30"/>
                                     加速規
                                 </a>
                             </li>
                             <li class="list-unstyled p-0">
-                                <a id="CC-btn" class="rounded hover-b d-block ps-1 pe-3 py-1 text-dark text-decoration-none sensor-btn d-flex align-items-center">
+                                <a id="CC-btn" class="rounded hover-b d-block ps-1 pe-3 py-1 text-dark text-decoration-none sensor-btn d-flex align-items-center"  data-sensor-type-id="2">
                                     <img src="{{ url_for('static', filename='icons/current_transformer.jpg') }}" class="float-start me-2 bg-white" height="30"/>
                                     比流計
                                 </a>
                             </li>
                             <li class="list-unstyled p-0">
-                                <a id="MIC-btn" class="rounded hover-b d-block ps-1 pe-3 py-1 text-dark text-decoration-none sensor-btn d-flex align-items-center">
+                                <a id="MIC-btn" class="rounded hover-b d-block ps-1 pe-3 py-1 text-dark text-decoration-none sensor-btn d-flex align-items-center"  data-sensor-type-id="3">
                                     <img src="{{ url_for('static', filename='icons/microphone.jpg') }}" class="float-start me-2 bg-white" height="30"/>
                                     麥克風
                                 </a>
@@ -151,7 +151,6 @@
     fetch('/machines')
         .then(response => response.json())
         .then(types => {
-            console.log(types)
             types.forEach(type => {
                 let menu = document.createElement("li");
                 let menuA = document.createElement("a");

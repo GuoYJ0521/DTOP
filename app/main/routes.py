@@ -32,20 +32,39 @@ def logout():
 
 # machine types
 @main.route('/machines')
-def machines():
+def machines_nav():
     return get_machines()
 
-# machines
+# 所有機台資訊
 @main.route("/machines/<int:id>")
-def machine(id):
+def machines_nav_li(id):
     return get_machines_id(id)
+
+# 單一機台資訊
+@main.route("/machine/<int:id>")
+def machine_info(id):
+    return get_machine_id(id)
+
+# 所有感測器
+@main.route("/sensors")
+def sensors():
+    return get_sensors()
+
+# 機台感測器
+@main.route("/machine/sensors/<int:id>")
+def machine_sensors(id):
+    return get_machine_sensors(id)
+
+# channel資訊
+@main.route("/machine/channels/<id>")
+def machine_channel(id):
+    return get_channel_datas(id)
 
 # machine info
 @main.route("/machine/<machine>/<machine_id>")
 @login_required
-def machine_info(machine, machine_id):
-    curr_machine = get_machine_sensor(machine_id)
-    return render_template("machine.html",machine=machine, curr_machine=curr_machine, user=current_user)
+def machine(machine, machine_id):
+    return render_template("machine.html", user=current_user, machine_id=machine_id)
 
 # log infomation
 @main.route("/log", methods=["POST"])

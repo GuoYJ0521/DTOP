@@ -73,6 +73,12 @@ class SensorList(db.Model):
     def __repr__(self) -> str:
         return f'{self.type}'
     
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "type": self.type
+        }
+    
 class Sensors(db.Model):
     __tablename__ = 'sensors'
     id = db.Column(db.Integer, primary_key=True)
@@ -89,6 +95,21 @@ class Sensors(db.Model):
 
     def __repr__(self) -> str:
         return f'{self.id, self.sensor_id, self.channel_id, self.location, self.location_x, self.location_y, self.location_z, self.safelimit_mean, self.safelimit_rms, self.safelimit_std}'
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "sensor_id": self.sensor_id,
+            "machine": self.machine,
+            "channel_id": self.channel_id,
+            "location": self.location,
+            "location_x": self.location_x,
+            "location_y": self.location_y,
+            "location_z": self.location_z,
+            "safelimit_mean": self.safelimit_mean,
+            "safelimit_rms": self.safelimit_rms,
+            "safelimit_std": self.safelimit_std
+        }
 
 class Channel(db.Model):
     __tablename__ = 'channel'
@@ -116,13 +137,13 @@ class Channel(db.Model):
             "mean": self.mean,
             "rms": self.rms,
             "std": self.std,
-            "fft_1": self.fft_1,
-            "fft_2": self.fft_2,
-            "fft_3": self.fft_3,
-            "fft_4": self.fft_4,
-            "fft_5": self.fft_5,
-            "fft_6": self.fft_6,
-            "fft_7": self.fft_7,
-            "fft_8": self.fft_8,
+            # "fft_1": self.fft_1,
+            # "fft_2": self.fft_2,
+            # "fft_3": self.fft_3,
+            # "fft_4": self.fft_4,
+            # "fft_5": self.fft_5,
+            # "fft_6": self.fft_6,
+            # "fft_7": self.fft_7,
+            # "fft_8": self.fft_8,
             "time": self.time
         }
