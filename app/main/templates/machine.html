@@ -37,6 +37,7 @@
 
     <p class="fw-bold my-0">Abnormality detected</p>
     <hr class="m-0">
+    <div id="abnormal"></div>
 {% endblock %}
 
 {% block scripts%}
@@ -49,6 +50,7 @@
     // machine information
     const machineInfo = document.getElementById("machine-info");
     const machineSensor = document.getElementById("machine-sensors");
+    const textalert = document.getElementById("abnormal");
     const scene = new THREE.Scene();   
     const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 10000);
     const canvas = document.getElementById("machine-condition");
@@ -348,6 +350,74 @@
                 btn.classList.toggle('animate-color-change', false);
             }
         }
+
+        // 文字警示
+        textAlert(sensors, type) {
+            // textalert
+            sensors.forEach(sensor => {
+                let element = document.getElementById(`${type}-${sensor.channel_id}-location`);
+                if (sensor.isdanger) {
+                    if (!element) {
+                        let div = document.createElement("div");
+                        let location = document.createElement("p");
+                        let suggest = document.createElement("p");
+
+                        location.classList = "my-0";
+                        suggest.classList = "my-0 text-danger"
+                        location.textContent = `${type}-${sensor.location}`;
+                        suggest.textContent = "建議-砂輪修整";
+                        div.id = `${type}-${sensor.channel_id}-location`;
+
+                        div.append(location);
+                        div.append(suggest);
+                        textalert.append(div);
+
+                        this.log(sensor, type)
+                    }
+                } 
+                else {
+                    if (element) {
+                        element.remove();
+                    }
+                }
+            })    
+        }
+
+        // 紀錄資訊在文字文件中
+        log(sensor,type) {
+            fetch(`/log`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    sensor: type,
+                    location: sensor.location,
+                    alert: "修整砂輪"
+                })
+            })
+            .then(data => data.json())
+            .then(data => console.log(data))
+            .catch(error => console.error('Error:', error))
+        }
+
+        // 
+        mailAlert(sensor,location,alert) {
+            fetch(`/message`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    sensor: sensor,
+                    location: location,
+                    alert: alert
+                })
+            })
+            .then(data => data.json())
+            .then(data => console.log(data))
+            .catch(error => console.error('Error:', error))
+        }
     }
 
     class Machine{
@@ -372,6 +442,7 @@
                     let selectedSensors = this.sensors.filter(sensor => sensor.sensor_id == id);
                     selectedSensors.forEach(sensor => this.controller.update(sensor));
                     this.controller.btnAlert(selectedSensors, type)
+                    this.controller.textAlert(selectedSensors, type)
                 }
                 // this.sensors.forEach(sensor => {
                 // });
