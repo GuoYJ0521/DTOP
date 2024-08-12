@@ -68,12 +68,12 @@
                                     麥克風
                                 </a>
                             </li>
-                            <li class="list-unstyled p-0">
+                            <!-- <li class="list-unstyled p-0">
                                 <a class="rounded hover-b d-block ps-1 pe-3 py-1 text-dark text-decoration-none sensor-btn d-flex align-items-center">
                                     <img src="{{ url_for('static', filename='icons/vacuum.jpg') }}" class="me-2 bg-white" height="30"/>
                                     真空計
                                 </a>
-                            </li>
+                            </li> -->
                         </ul>
     
                         <br>
@@ -168,20 +168,15 @@
                 dropdown.classList.add("dropdown-menu", "bg-p", "position-absolute", "w100p");
 
                 // 下拉選單
-                fetch(`/machines/${type.id}`)
-                    .then(res => res.json())
-                    .then(machines =>{
-                        machines.forEach(machine => {
-                            let li = document.createElement("li");
-                            let liA = document.createElement("a");
-                            liA.textContent = machine.name;
-                            liA.classList.add("dropdown-item", "rounded", "hover-b");
-                            liA.href = `/machine/${type.machine}/${machine.id}`;
-                            li.append(liA);
-                            dropdown.append(li);
-                        }) 
-                    })
-                    .catch(error => console.error('Error:', error));
+                type.machines.forEach((machine) => {
+                    let li = document.createElement("li");
+                    let liA = document.createElement("a");
+                    liA.textContent = machine.name;
+                    liA.classList.add("dropdown-item", "rounded", "hover-b");
+                    liA.href = `/machine/${type.machine}/${machine.id}`;
+                    li.append(liA);
+                    dropdown.append(li);
+                })
 
                 menu.append(menuA);
                 menu.append(dropdown);

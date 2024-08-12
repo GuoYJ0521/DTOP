@@ -65,20 +65,15 @@
                 dropdown.classList.add("dropdown-menu", "bg-p", "position-absolute", "w100p");
 
                 // 下拉選單
-                fetch(`/machines/${type.id}`)
-                    .then(res => res.json())
-                    .then(machines =>{
-                        machines.forEach(machine => {
-                            let li = document.createElement("li");
-                            let liA = document.createElement("a");
-                            liA.textContent = machine.name;
-                            liA.classList.add("dropdown-item", "rounded", "hover-b");
-                            liA.href = `/machine/${type.machine}/${machine.id}`;
-                            li.append(liA);
-                            dropdown.append(li);
-                        }) 
-                    })
-                    .catch(error => console.error('Error:', error));
+                type.machines.forEach((machine) => {
+                    let li = document.createElement("li");
+                    let liA = document.createElement("a");
+                    liA.textContent = machine.name;
+                    liA.classList.add("dropdown-item", "rounded", "hover-b");
+                    liA.href = `/machine/${type.machine}/${machine.id}`;
+                    li.append(liA);
+                    dropdown.append(li);
+                })
 
                 menu.append(menuA);
                 menu.append(dropdown);

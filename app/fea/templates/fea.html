@@ -248,7 +248,7 @@
         currStep.append(kvalue);
         abaqusResult.append(currStep);
 
-        return fetch("run-abaqus", requestOptions)
+        return fetch("./abaqus", requestOptions)
         .then(response => response.json())
         .then(data => {
             console.log(`step-${step} finished`);

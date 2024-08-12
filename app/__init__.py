@@ -8,6 +8,7 @@ from flask_mail import Mail
 from flask_mqtt import Mqtt
 import logging
 import json
+import requests
 
 pymysql.install_as_MySQLdb() #SQLAlchemy預設使用MySQLdb 但python3連接使用pymysql
 db = SQLAlchemy()
@@ -39,52 +40,22 @@ def create_app():
         else:
             app.logger.error(f"[mqtt] Connection failed with result code {rc}")
 
-    from .main.models import Channel
-    from .cad.models import WorkingData
+    # from .main.models import Channel
+    # from .cad.models import WorkingData
     @mqtt.on_message()
     def handle_message(client, userdata, message):
         topic = message.topic.split("/")[1]
-        # print(topic)
+        try:
+            payload = json.loads(message.payload.decode())
+            if topic == "channel":
+                payload = json.loads(message.payload.decode())
+                response = requests.post(f'http://127.0.0.1:5000/machine/channels/{payload["id"]}', json=payload)
 
-        if topic == "channel":
-            try:
-                datas = json.loads(message.payload.decode())
-                app.logger.info("[mqtt] received data")
-                new_message = Channel(
-                    channel=int(datas["id"]),
-                    mean=float(datas["mean"]),
-                    rms=float(datas["rms"]),
-                    std=float(datas["std"]),
-                    fft_1=float(datas["fft_1"]),
-                    fft_2=float(datas["fft_2"]),
-                    fft_3=float(datas["fft_3"]),
-                    fft_4=float(datas["fft_4"]),
-                    fft_5=float(datas["fft_5"]),
-                    fft_6=float(datas["fft_6"]),
-                    fft_7=float(datas["fft_7"]),
-                    fft_8=float(datas["fft_8"]),
-                    time=datas["time"]
-                )
-                with app.app_context():
-                    db.session.add(new_message)
-                    db.session.commit()
-            except Exception as e:
-                app.logger.error(f"Error processing MQTT message: {e}")
+            elif topic == "controller":
+                payload = json.loads(message.payload.decode())
+                response = requests.post(f'http://127.0.0.1:5000/cad/controller/{payload["id"]}', json=payload)
 
-        if topic == "controller":
-            try:
-                datas = json.loads(message.payload.decode())
-                new_message = WorkingData(
-                    machine_id = int(datas["id"]),
-                    x = float(datas["x"]),
-                    y = float(datas["y"]),
-                    z = float(datas["z"]),
-                    speed = float(datas["speed"]),
-                )
-                with app.app_context():
-                    db.session.add(new_message)
-                    db.session.commit()
-            except Exception as e:
+        except Exception as e:
                 app.logger.error(f"Error processing MQTT message: {e}")
 
     # blue-print設定

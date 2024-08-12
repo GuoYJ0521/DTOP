@@ -35,22 +35,25 @@ class MachineList(db.Model):
     __tablename__ = 'machine_list'
     id = db.Column(db.Integer, primary_key=True)
     machine = db.Column(db.String(30))
+    machines = db.relationship('Machines', backref='machine_list', lazy='select')
 
     def to_dict(self):
         return {
             'id': self.id,
-            'machine': self.machine
+            'machine': self.machine,
+            'machines': [{"name": machine.name, "id": machine.id} for machine in self.machines]
         }
 
 class Machines(db.Model):
     __tablename__ = 'machines'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(30))
-    machine_id = db.Column(db.Integer)
+    machine_id = db.Column(db.Integer, db.ForeignKey('machine_list.id'), nullable=False)
     location = db.Column(db.String(30))
     work_piece = db.Column(db.String(30))
     cutting_tool = db.Column(db.String(30))
     machine_type = db.Column(db.String(30))
+    sensors = db.relationship('Sensors', backref='machines', lazy='select')
 
     def to_dict(self):
         return {
@@ -60,7 +63,8 @@ class Machines(db.Model):
             'location': self.location,
             'work_piece': self.work_piece,
             'cutting_tool': self.cutting_tool,
-            'machine_type': self.machine_type
+            'machine_type': self.machine_type,
+            # 'sensors': [sensor.to_dict() for sensor in self.sensors]
         }
 
 # sensor list
@@ -68,7 +72,7 @@ class SensorList(db.Model):
     __tablename__ = 'sensor_list'
     id = db.Column(db.Integer, primary_key=True)
     type = db.Column(db.String(30))
-    contacts = db.relationship('Sensors',backref='snesortype')
+    sensors = db.relationship('Sensors', backref='sensor_list', lazy='select')
 
     def __repr__(self) -> str:
         return f'{self.type}'
@@ -82,8 +86,8 @@ class SensorList(db.Model):
 class Sensors(db.Model):
     __tablename__ = 'sensors'
     id = db.Column(db.Integer, primary_key=True)
-    sensor_id = db.Column(db.Integer,db.ForeignKey(SensorList.id))
-    machine = db.Column(db.Integer)
+    sensor_id = db.Column(db.Integer, db.ForeignKey('sensor_list.id'), nullable=False)
+    machine = db.Column(db.Integer, db.ForeignKey('machines.id'), nullable=False)
     channel_id = db.Column(DECIMAL(2, 1))
     location = db.Column(db.String(30))
     location_x = db.Column(db.Float)
@@ -92,6 +96,7 @@ class Sensors(db.Model):
     safelimit_mean = db.Column(db.Float)
     safelimit_rms = db.Column(db.Float)
     safelimit_std = db.Column(db.Float)
+    # channel_data = db.relationship('Channel', backref='sensors', lazy='select')
 
     def __repr__(self) -> str:
         return f'{self.id, self.sensor_id, self.channel_id, self.location, self.location_x, self.location_y, self.location_z, self.safelimit_mean, self.safelimit_rms, self.safelimit_std}'
@@ -115,6 +120,7 @@ class Channel(db.Model):
     __tablename__ = 'channel'
     id = db.Column(db.Integer, primary_key=True)
     channel = db.Column(DECIMAL(2, 1))
+    # channel = db.Column(DECIMAL(2, 1), db.ForeignKey('sensors.channel_id'), nullable=False)
     mean = db.Column(db.Float)
     rms = db.Column(db.Float)
     std = db.Column(db.Float)

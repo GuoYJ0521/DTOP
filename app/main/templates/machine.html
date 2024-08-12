@@ -397,7 +397,6 @@
                 })
             })
             .then(data => data.json())
-            .then(data => console.log(data))
             .catch(error => console.error('Error:', error))
         }
 
@@ -415,7 +414,6 @@
                 })
             })
             .then(data => data.json())
-            .then(data => console.log(data))
             .catch(error => console.error('Error:', error))
         }
     }
@@ -453,6 +451,65 @@
         run() {
             this.controller.showInfo();
             this.update();
+        }
+    }
+
+    // co2圖表
+    class Guage {
+        plot(x,y,chart) {
+            // const chart = document.querySelector(`#${div}`);
+            let trace1 = {
+                x: x,
+                y: y,
+                type: 'scatter',
+                mode: 'lines+markers',
+                marker: {
+                    color: 'rgb(75, 192, 192)',
+                    opacity: 0.5,
+                },
+                // fill: 'tonexty'
+            };
+            
+            let layout = {
+                autosize: false,
+                width: 300,
+                height: 200,
+                hovermode: "closest",
+                margin: {
+                    l: 50,
+                    r: 0,
+                    b: 40,
+                    t: 0,
+                    pad: 0
+                },
+                xaxis: {
+                    title: 'time',
+                    tickmode: 'auto',  // 自動選擇刻度模式
+                    nticks: 4
+                },
+                yaxis: {
+                    title: "carbon emission",    
+                    // range: [0, 100],
+                    rangemode: "tozero"
+                },
+                title: {
+                    font: {
+                        size: 18
+                    }
+                },
+                legend: {
+                    x: 0.2,
+                    y: 1.1,
+                    orientation: "h",
+                },
+                font: {
+                    size: 14
+                }
+            };
+
+            let data = [trace1];
+            Plotly.newPlot(chart, data, layout);
+
         }
     }
 
@@ -557,6 +614,31 @@
 
     console.log(machine)
     machine.run()
-    
+
+    // 顯示頁面目前位置
+    window.addEventListener('scroll', function() {
+        let scrollPosition = window.scrollY;
+        Object.entries(machine.sensorsType).forEach(([id, sensor]) => {
+            const div = document.querySelector(`#${sensor}-data`);
+            const btn = document.querySelector(`#${sensor}-btn`);
+            const rect = div.getBoundingClientRect();
+            const top = rect.top + scrollPosition - 80;
+            const bottom = rect.bottom + scrollPosition - 80;
+
+            if (top <= scrollPosition && bottom >= scrollPosition) {
+                btn.classList.toggle('text-dark',false);
+                btn.classList.toggle('viewer',true);
+            } else {
+                btn.classList.toggle('text-dark',true);
+                btn.classList.toggle('viewer',false);
+            }
+        }) 
+        })
+
+    // test
+    const guage = new Guage();
+    let time = ['11:07:17','11:08:17','11:09:17','11:10:17','11:11:17']
+    let data = [10,11,12,10,10]
+    guage.plot(time,data,curr_co2)
     </script>
 {% endblock %}

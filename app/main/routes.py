@@ -24,12 +24,6 @@ def logout():
     logout_user()
     return redirect(url_for('main.index'))
 
-# 獲取navbar資料
-# @main.route('/get_machines_data', methods=['POST'])
-# def get_machines_data():
-#     machine_list = get_machines()
-#     return jsonify(machine_list)
-
 # machine types
 @main.route('/machines')
 def machines_nav():
@@ -56,9 +50,12 @@ def machine_sensors(id):
     return get_machine_sensors(id)
 
 # channel資訊
-@main.route("/machine/channels/<id>")
+@main.route("/machine/channels/<id>", methods=["GET", "POST"])
 def machine_channel(id):
-    return get_channel_datas(id)
+    if request.method == "GET":
+        return get_channel_datas(id)
+    elif request.method == "POST":
+        return post_channel_data(id)
 
 # machine info
 @main.route("/machine/<machine>/<machine_id>")
@@ -69,8 +66,7 @@ def machine(machine, machine_id):
 # log infomation
 @main.route("/log", methods=["POST"])
 def log():
-    logging()
-    return {"message": "warning"}
+    return logging()
 
 # mailtrap
 @main.route("/message", methods=["POST"])
@@ -78,10 +74,3 @@ def message():
     msg_recipients = [f'{current_user.email}']
     # mail_message(msg_recipients)
     return {"message": "send"}
-
-# 獲取channel資料
-@main.route("/get_channel_data", methods=['POST'])
-def get_channel_data():
-    id = request.json.get('id')
-    channel_data = get_channel(id)
-    return jsonify(channel_data)

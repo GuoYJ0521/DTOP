@@ -11,7 +11,7 @@ def index():
     return render_template("fea.html", form=data["form"], operation=data["operation"], properties=data["properties"], status=data["status"], user=current_user)
 
 # run abaqus function
-@fea.route("/run-abaqus", methods=["POST"])
+@fea.route("/abaqus", methods=["POST"])
 @login_required
 def run_abaqus_api():
     data = abaqus_sumit()
