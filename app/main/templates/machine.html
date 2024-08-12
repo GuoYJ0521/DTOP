@@ -65,10 +65,11 @@
 
     // class
     class Chart {
-        constructor (div, upperlimit) {
+        constructor (div, upperlimit, lowerlimit) {
             // console.log(div)
             this.div = div;
             this.upperlimit = upperlimit;
+            this.lowerlimit = lowerlimit;
         }
 
         plot(x, y) {
@@ -108,7 +109,7 @@
             // loewer bound
             let trace3 = {
                 x: x,
-                y: Array(x.length).fill(20),
+                y: Array(x.length).fill(this.lowerlimit),
                 alert: alert,
                 type: 'scatter',
                 mode: 'lines',
@@ -176,7 +177,7 @@
             div.data[1].y = Array(x.length).fill(this.upperlimit);
             // update lower bound
             div.data[2].x = x;
-            div.data[2].y = Array(x.length).fill(20);
+            div.data[2].y = Array(x.length).fill(this.lowerlimit);
 
             // plotly 更新
             Plotly.redraw(div);
@@ -332,7 +333,7 @@
         // 判斷sensor資料是否大於預值
         isdanger(sensor, datas) {
             let lastData = datas[datas.length-1];
-            if (dataProcess.some(process => lastData[process] >= sensor[`safelimit_${process}`])) {
+            if (dataProcess.some(process => lastData[process] >= sensor[`safelimit_${process}`] || lastData[process] <= sensor[`lowerlimit_${process}`])) {
                 sensor.isdanger = true;
                 return true
             } else {
@@ -602,7 +603,7 @@
                 let div = `${type}-${sensor.channel_id}-${process}`;
                 let data = datas.flatMap((data)=>data[process]);
                 let time = datas.flatMap((data)=>[data.time.split(' ')[4]]);
-                let chart = new Chart(div, sensor[`safelimit_${process}`]);
+                let chart = new Chart(div, sensor[`safelimit_${process}`], sensor[`lowerlimit_${process}`]);
                 chart.plot(time,data);
 
                 sensor.chart[process] = chart;

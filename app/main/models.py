@@ -96,6 +96,9 @@ class Sensors(db.Model):
     safelimit_mean = db.Column(db.Float)
     safelimit_rms = db.Column(db.Float)
     safelimit_std = db.Column(db.Float)
+    lowerlimit_mean = db.Column(db.Float)
+    lowerlimit_rms = db.Column(db.Float)
+    lowerlimit_std = db.Column(db.Float)
     # channel_data = db.relationship('Channel', backref='sensors', lazy='select')
 
     def __repr__(self) -> str:
@@ -113,7 +116,10 @@ class Sensors(db.Model):
             "location_z": self.location_z,
             "safelimit_mean": self.safelimit_mean,
             "safelimit_rms": self.safelimit_rms,
-            "safelimit_std": self.safelimit_std
+            "safelimit_std": self.safelimit_std,
+            "lowerlimit_mean": self.lowerlimit_mean,
+            "lowerlimit_rms": self.lowerlimit_rms,
+            "lowerlimit_std": self.lowerlimit_std
         }
 
 class Channel(db.Model):
