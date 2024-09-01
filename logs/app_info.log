@@ -126,3 +126,87 @@
 2024-08-12 23:14:59,732 - WARNING - 異常-主軸上方ACM 建議-修整砂輪
 2024-08-12 23:14:59,733 - WARNING - 異常-載台CC 建議-修整砂輪
 2024-08-12 23:14:59,734 - WARNING - 異常-主軸下方ACM 建議-修整砂輪
+2024-09-01 14:17:35,845 - ERROR - Error processing MQTT message: 'dict' object has no attribute 'id'
+2024-09-01 14:17:43,292 - ERROR - Error processing MQTT message: 'dict' object has no attribute 'id'
+2024-09-01 14:17:53,085 - ERROR - Error processing MQTT message: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+2024-09-01 14:17:54,602 - ERROR - Error processing MQTT message: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+2024-09-01 14:17:58,867 - ERROR - Error processing MQTT message: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+2024-09-01 14:18:07,150 - ERROR - Error processing MQTT message: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+2024-09-01 14:18:56,694 - ERROR - Error processing MQTT message: 'dict' object has no attribute 'id'
+2024-09-01 14:18:56,695 - ERROR - Error processing MQTT message: 'dict' object has no attribute 'id'
+2024-09-01 14:19:19,834 - ERROR - Error processing MQTT message: 'dict' object has no attribute 'id'
+2024-09-01 14:20:27,825 - ERROR - Error processing MQTT message: 'dict' object has no attribute 'id'
+2024-09-01 14:20:27,827 - ERROR - Error processing MQTT message: 'dict' object has no attribute 'id'
+2024-09-01 14:21:27,073 - ERROR - Error processing MQTT message: 'dict' object has no attribute 'id'
+2024-09-01 14:21:54,290 - ERROR - Error processing MQTT message: 'dict' object has no attribute 'id'
+2024-09-01 14:21:57,276 - ERROR - Error processing MQTT message: 'dict' object has no attribute 'id'
+2024-09-01 14:23:09,300 - ERROR - Error processing MQTT message: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+2024-09-01 14:23:09,301 - ERROR - Error processing MQTT message: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+2024-09-01 14:23:11,363 - ERROR - Error processing MQTT message: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+2024-09-01 14:23:11,363 - ERROR - Error processing MQTT message: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+2024-09-01 14:23:41,711 - ERROR - Error processing MQTT message: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+2024-09-01 14:23:43,783 - ERROR - Error processing MQTT message: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+2024-09-01 14:26:43,666 - ERROR - Error processing MQTT message: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+2024-09-01 14:26:43,667 - ERROR - Error processing MQTT message: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+2024-09-01 14:28:22,735 - ERROR - Error processing MQTT message: 'dict' object has no attribute 'id'
+2024-09-01 14:28:22,735 - ERROR - Error processing MQTT message: 'dict' object has no attribute 'id'
+2024-09-01 14:28:25,108 - ERROR - Error processing MQTT message: 'dict' object has no attribute 'id'
+2024-09-01 14:28:25,108 - ERROR - Error processing MQTT message: 'dict' object has no attribute 'id'
+2024-09-01 17:17:56,383 - ERROR - Error processing MQTT message: 'Sensors' object is not subscriptable
+2024-09-01 17:17:56,403 - ERROR - Error processing MQTT message: 'Sensors' object is not subscriptable
+2024-09-01 17:18:25,484 - ERROR - Error processing MQTT message: 'Sensors' object is not subscriptable
+2024-09-01 17:18:25,485 - ERROR - Error processing MQTT message: 'Sensors' object is not subscriptable
+2024-09-01 17:18:53,777 - ERROR - Error processing MQTT message: 'Sensors' object is not subscriptable
+2024-09-01 17:18:53,795 - ERROR - Error processing MQTT message: 'Sensors' object is not subscriptable
+2024-09-01 17:19:18,434 - ERROR - Error processing MQTT message: 'Sensors' object is not subscriptable
+2024-09-01 17:19:58,407 - ERROR - Error processing MQTT message: '>=' not supported between instances of 'str' and 'float'
+2024-09-01 17:29:47,931 - ERROR - Error processing MQTT message: 'dict' object has no attribute 'id'
+2024-09-01 17:29:47,931 - ERROR - Error processing MQTT message: 'dict' object has no attribute 'id'

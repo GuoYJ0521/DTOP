@@ -1,4 +1,5 @@
-from flask import Flask, current_app
+from flask import Flask
+from flask import current_app as app
 import pymysql
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -18,6 +19,7 @@ login = LoginManager()
 login.login_view = 'login'
 mail = Mail()
 mqtt = Mqtt()
+process = ["mean", "std", "rms"]
 
 def create_app():
     app = Flask(__name__)
@@ -42,14 +44,21 @@ def create_app():
 
     # from .main.models import Channel
     # from .cad.models import WorkingData
+    from .main.models import Sensors
     @mqtt.on_message()
     def handle_message(client, userdata, message):
         topic = message.topic.split("/")[1]
         try:
             payload = json.loads(message.payload.decode())
             if topic == "channel":
-                payload = json.loads(message.payload.decode())
-                response = requests.post(f'http://127.0.0.1:5000/machine/channels/{payload["id"]}', json=payload)
+                with app.app_context():
+                    sensor = db.session.query(Sensors).filter(Sensors.channel_id == payload['id']).first().to_dict()
+                    if any(float(payload[p]) >= float(sensor[f"safelimit_{p}"]) or float(payload[p]) <= float(sensor[f"lowerlimit_{p}"]) for p in process):
+                        requests.post(f'http://127.0.0.1:5000/message', json={"sensor":sensor["id"], "location":sensor["location"], "alert": "修整砂輪"})
+                        requests.post(f'http://127.0.0.1:5000/log', json={"sensor":sensor["id"], "location":sensor["location"], "alert": "修整砂輪"})
+                    else:
+                        print("safe")
+                # response = requests.post(f'http://127.0.0.1:5000/machine/channels/{payload["id"]}', json=payload)
 
             elif topic == "controller":
                 payload = json.loads(message.payload.decode())

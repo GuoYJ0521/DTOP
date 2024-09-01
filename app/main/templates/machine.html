@@ -373,7 +373,7 @@
                         div.append(suggest);
                         textalert.append(div);
 
-                        this.log(sensor, type)
+                        // this.log(sensor, type)
                     }
                 } 
                 else {
@@ -401,22 +401,22 @@
             .catch(error => console.error('Error:', error))
         }
 
-        // 
-        mailAlert(sensor,location,alert) {
-            fetch(`/message`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    sensor: sensor,
-                    location: location,
-                    alert: alert
-                })
-            })
-            .then(data => data.json())
-            .catch(error => console.error('Error:', error))
-        }
+        // mailtrap
+        // mailAlert(sensor,location,alert) {
+        //     fetch(`/message`, {
+        //         method: 'POST',
+        //         headers: {
+        //             'Content-Type': 'application/json'
+        //         },
+        //         body: JSON.stringify({
+        //             sensor: sensor,
+        //             location: location,
+        //             alert: alert
+        //         })
+        //     })
+        //     .then(data => data.json())
+        //     .catch(error => console.error('Error:', error))
+        // }
     }
 
     class Machine{

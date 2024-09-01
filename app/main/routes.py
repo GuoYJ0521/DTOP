@@ -2,6 +2,7 @@ from flask import render_template, redirect, url_for, request, jsonify
 from flask_login import login_required, logout_user, current_user
 from .forms import FormLogin, FormRegister
 from .code import *
+from .models import User
 
 # login
 @main.route('/', methods=["GET", "POST"])
@@ -71,6 +72,6 @@ def log():
 # mailtrap
 @main.route("/message", methods=["POST"])
 def message():
-    msg_recipients = [f'{current_user.email}']
-    # mail_message(msg_recipients)
+    msg_recipients = [user.email for user in User.query.all()]
+    mail_message(msg_recipients)
     return {"message": "send"}
