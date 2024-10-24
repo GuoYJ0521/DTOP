@@ -1,4 +1,4 @@
-from flask import render_template, redirect, url_for, request, jsonify
+from flask import render_template, redirect, url_for, request, jsonify, session
 from flask_login import login_required, logout_user, current_user
 from .forms import FormLogin, FormRegister
 from .code import *
@@ -51,27 +51,15 @@ def machine_sensors(id):
     return get_machine_sensors(id)
 
 # channel資訊
-@main.route("/machine/channels/<id>", methods=["GET", "POST"])
+@main.route("/machine/channels/<id>")
 def machine_channel(id):
     if request.method == "GET":
         return get_channel_datas(id)
-    elif request.method == "POST":
-        return post_channel_data(id)
 
 # machine info
 @main.route("/machine/<machine>/<machine_id>")
 @login_required
 def machine(machine, machine_id):
-    return render_template("machine.html", user=current_user, machine_id=machine_id)
-
-# log infomation
-@main.route("/log", methods=["POST"])
-def log():
-    return logging()
-
-# mailtrap
-@main.route("/message", methods=["POST"])
-def message():
-    msg_recipients = [user.email for user in User.query.all()]
-    mail_message(msg_recipients)
-    return {"message": "send"}
+    if machine == "Robot arm":
+        return render_template("robot.html", user=current_user)
+    return render_template("machine.html", user=current_user, machine_id=machine_id, machine=machine)

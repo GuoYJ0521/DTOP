@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 
+{% block sensor1 %} href="/machine/{{machine}}/{{machine_id}}" {% endblock %}
+{% block sensor2 %} href="/machine/{{machine}}/{{machine_id}}" {% endblock %}
+{% block sensor3 %} href="/machine/{{machine}}/{{machine_id}}" {% endblock %}
+
 {% block content %}
 <form method="POST">
     <fieldset>

@@ -210,3 +210,185 @@ with app.app_context(). See the documentation for more information.
 2024-09-01 17:19:58,407 - ERROR - Error processing MQTT message: '>=' not supported between instances of 'str' and 'float'
 2024-09-01 17:29:47,931 - ERROR - Error processing MQTT message: 'dict' object has no attribute 'id'
 2024-09-01 17:29:47,931 - ERROR - Error processing MQTT message: 'dict' object has no attribute 'id'
+2024-09-10 12:51:01,057 - ERROR - Error processing MQTT message: Working outside of request context.
+
+This typically means that you attempted to use functionality that needed
+an active HTTP request. Consult the documentation on testing for
+information about how to avoid this problem.
+2024-09-10 12:51:01,057 - ERROR - Error processing MQTT message: Working outside of request context.
+
+This typically means that you attempted to use functionality that needed
+an active HTTP request. Consult the documentation on testing for
+information about how to avoid this problem.
+2024-09-10 12:52:11,353 - ERROR - Error processing MQTT message: Working outside of request context.
+
+This typically means that you attempted to use functionality that needed
+an active HTTP request. Consult the documentation on testing for
+information about how to avoid this problem.
+2024-09-10 12:52:14,758 - ERROR - Error processing MQTT message: Working outside of request context.
+
+This typically means that you attempted to use functionality that needed
+an active HTTP request. Consult the documentation on testing for
+information about how to avoid this problem.
+2024-09-10 12:52:17,277 - ERROR - Error processing MQTT message: Working outside of request context.
+
+This typically means that you attempted to use functionality that needed
+an active HTTP request. Consult the documentation on testing for
+information about how to avoid this problem.
+2024-09-10 12:52:25,041 - ERROR - Error processing MQTT message: Working outside of request context.
+
+This typically means that you attempted to use functionality that needed
+an active HTTP request. Consult the documentation on testing for
+information about how to avoid this problem.
+2024-09-10 12:53:27,824 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 12:53:28,632 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 12:53:41,835 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 12:53:42,357 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 12:54:26,541 - ERROR - Error processing MQTT message: Working outside of request context.
+
+This typically means that you attempted to use functionality that needed
+an active HTTP request. Consult the documentation on testing for
+information about how to avoid this problem.
+2024-09-10 12:54:26,541 - ERROR - Error processing MQTT message: Working outside of request context.
+
+This typically means that you attempted to use functionality that needed
+an active HTTP request. Consult the documentation on testing for
+information about how to avoid this problem.
+2024-09-10 16:37:20,646 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 16:37:21,043 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 16:37:26,367 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 16:37:26,818 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 16:38:18,172 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 16:38:24,154 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 16:38:27,932 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 16:38:29,431 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 16:38:30,936 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 16:38:32,447 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 16:38:38,150 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 16:39:10,480 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 16:39:10,511 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 16:39:13,646 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 16:39:13,650 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 16:39:15,851 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 16:39:15,854 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:12:05,174 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:12:05,193 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:19:00,545 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:19:00,551 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:19:24,550 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:19:24,557 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:19:27,654 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:19:27,657 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:19:29,657 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:19:29,659 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:19:34,432 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:19:34,435 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:20:48,979 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:20:48,996 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:20:51,652 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:20:51,657 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:21:50,849 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:21:50,856 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:22:14,004 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:22:14,035 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:27:54,084 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:27:54,087 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:27:57,155 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:27:57,158 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:27:58,950 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:27:58,953 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:28:00,675 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:28:00,683 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:29:08,652 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:30:23,087 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:30:24,626 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:31:21,063 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:31:22,642 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:31:24,609 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:31:49,777 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:31:51,652 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:31:53,088 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:31:54,559 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:31:56,058 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:31:57,131 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:31:58,654 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:32:00,132 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:32:19,414 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:32:19,430 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:32:21,145 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:32:21,147 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:32:22,991 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:32:22,992 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:32:24,460 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:32:24,461 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:32:25,605 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:32:25,606 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:32:28,762 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:32:28,846 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:32:30,481 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:32:30,482 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:34:09,473 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:34:09,530 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:34:11,016 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:34:11,017 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:34:12,479 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:34:12,480 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:34:17,026 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:34:17,028 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:34:18,504 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:34:18,508 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:34:28,993 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:34:30,670 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:34:32,153 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:34:33,645 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:34:35,125 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:35:24,483 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:35:24,514 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:42:56,045 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:42:58,192 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:42:59,676 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:43:00,878 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:53:42,195 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:53:42,197 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:53:44,659 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:53:44,660 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:53:45,991 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:53:46,008 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:53:49,117 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:53:49,120 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:53:50,611 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:53:50,613 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:53:52,151 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:53:52,152 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:54:32,155 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:54:36,167 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:54:37,673 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:54:39,103 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:54:40,626 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:54:42,122 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:54:43,617 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:54:45,147 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:54:48,170 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:54:50,176 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:54:51,653 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:54:52,950 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:54:58,026 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:54:59,499 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:55:29,165 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:55:30,173 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:55:31,717 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:55:33,176 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:55:34,183 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:55:42,681 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:55:43,991 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:55:45,482 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:55:47,019 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:57:13,157 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:57:16,155 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:57:17,669 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-09-10 17:57:18,877 - WARNING - 異常-主軸上方1 建議-修整砂輪
+2024-10-24 16:31:17,331 - WARNING - 異常-00ACM 建議-00
+2024-10-24 16:31:18,343 - WARNING - 異常-00ACM 建議-00
+2024-10-24 16:32:04,842 - WARNING - 異常-00ACM 建議-00
+2024-10-24 18:49:48,343 - WARNING - 異常-00ACM 建議-00
+2024-10-24 18:49:51,242 - WARNING - 異常-00ACM 建議-00

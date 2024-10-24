@@ -1,4 +1,4 @@
-from flask import request, flash, redirect, url_for, jsonify
+from flask import request, flash, redirect, url_for, jsonify, session
 from flask import current_app as app
 from flask_login import login_user
 from flask_mail import Message
@@ -67,63 +67,3 @@ def get_channel_datas(id):
     res = [data.to_dict() for data in reversed(datas)]
 
     return jsonify(res)
-
-# log message
-def logging():
-    try:
-        sensor = request.json.get('sensor')
-        location = request.json.get('location')
-        alert = request.json.get('alert')
-        warning = f"異常-{location}{sensor} 建議-{alert}"
-        app.logger.warning(warning)
-        return jsonify({"error": 0})
-    except Exception as e:
-        return jsonify({"error": e})
-
-# mail message 收件者，格式為list，否則報錯
-def mail_message(msg_recipients):
-    try:
-        msg_title = 'DT alert'
-        msg_sender = 'yijunguo473@gmail.com'
-        #  郵件內容
-        sensor = request.json.get('sensor')
-        location = request.json.get('location')
-        alert = request.json.get('alert')
-        msg_body = f"異常-{location}{sensor}\n建議-{alert}"
-        msg = Message(msg_title,
-                    sender=msg_sender,
-                    recipients=msg_recipients)
-        msg.body = msg_body
-        # 寄出郵件
-        mail.send(msg)
-        return jsonify({"error": 0})
-    
-    except Exception as e:
-        return jsonify({"error": e})
-
-# 上傳channel資料
-def post_channel_data(channel):
-    try:
-        datas = datas = request.json
-        new_message = Channel(
-            channel=float(channel),
-            mean=float(datas["mean"]),
-            rms=float(datas["rms"]),
-            std=float(datas["std"]),
-            fft_1=float(datas["fft_1"]),
-            fft_2=float(datas["fft_2"]),
-            fft_3=float(datas["fft_3"]),
-            fft_4=float(datas["fft_4"]),
-            fft_5=float(datas["fft_5"]),
-            fft_6=float(datas["fft_6"]),
-            fft_7=float(datas["fft_7"]),
-            fft_8=float(datas["fft_8"]),
-            time=datas["time"]
-        )
-        with app.app_context():
-            db.session.add(new_message)
-            db.session.commit()
-        return jsonify({"error": 0})
-
-    except Exception as e:
-        return jsonify({"error": e})

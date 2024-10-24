@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="kevin"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/template.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <title>smart factory</title>
+    {% block head %}
+    {% endblock %}
+</head>
+<body>
+    <!-- navbar -->
+    <nav class="navbar navbar-expand-lg bg-white sticky-top shadow-sm">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold fs-3 mx-2 px-2 rounded hover-b" href="/">Digital Twin</a>
+
+            <!-- responsive button -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse fs-5" id="navbarSupportedContent">
+                <ul class="navbar-nav mx-2" id="nav-menu">                          
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="d-flex align-items-stretch">
+        <!-- 左邊功能列 -->
+        <div class="min-h-100">
+            <div id="container-left">
+                <div class="d-block sticky-at-current">
+                    <!-- icon -->
+                    <button type="button" id="collapse-left" class="collapse-btn-left">
+                        <i class="bi bi-arrow-bar-left"></i>
+                    </button>
+
+                    <!-- 身分 -->
+                    <div class="mb-3">
+                        <img src="{{ url_for('static', filename='icons/user.jpg') }}" class="bg-dark float-start mx-3 my-0" height="50" alt="Machine Image"/>
+                        <p class="my-0">Welcome,</p>
+                        <p class="fw-bold my-1"> {{ user.name }}</p>
+                    </div>
+                    
+                    <!-- 功能列 -->
+                    <div class="mx-3">
+                        <div>
+                            <a class="rounded hover-b d-block py-1 text-dark text-decoration-none fw-bold fs-5 simulation-btn" href="/logout">
+                                <img src="{{ url_for('static', filename='icons/logout.jpg') }}" class="ms-1 float-start me-2 bg-white" height="30"/>
+                                Log out
+                            </a>   
+                        </div>
+                    </div> 
+                </div>
+            </div>
+        </div>
+        
+        <!-- 中間資訊 -->
+        <div class="container-middle fs-5 my-5 px-3">
+            {% block content %}
+            {% endblock %}
+        </div>
+
+        <!-- 右邊狀況 -->
+        <div>
+            <div id="container-right">
+                <div class="d-block sticky-at-current" >
+                    <button type="button" id="collapse-right" class="collapse-btn-right">
+                        <i class="bi bi-arrow-bar-right"></i>
+                    </button>
+                    <div class="ps-5 pe-3 fs-5">
+                        {% block condition %}
+                        {% endblock %}
+                    </div>             
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <!-- 引用chart.js 庫 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <!-- 引入 jQuery 庫 -->
+    <!-- <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script> -->
+</body>
+</html>
+
+<script>
+    // menu for all types of machine
+    const navMenu = document.querySelector("#nav-menu");
+
+    fetch('/machines')
+        .then(response => response.json())
+        .then(types => {
+            types.forEach(type => {
+                let menu = document.createElement("li");
+                let menuA = document.createElement("a");
+                // machine list for a specific type
+                let dropdown = document.createElement("ul");
+
+                menuA.textContent = type.machine;
+
+                // 屬性
+                menu.classList.add("nav-item", "dropdown", "mx-2");
+                menuA.classList.add("nav-link","dropdown-toggle","text-dark","rounded","hover-b");
+                menuA.setAttribute("role","button");
+                menuA.setAttribute("data-bs-toggle","dropdown");
+                menuA.setAttribute("aria-expanded","false");
+                dropdown.classList.add("dropdown-menu", "bg-p", "position-absolute", "w100p");
+
+                // 下拉選單
+                type.machines.forEach((machine) => {
+                    let li = document.createElement("li");
+                    let liA = document.createElement("a");
+                    liA.textContent = machine.name;
+                    liA.classList.add("dropdown-item", "rounded", "hover-b");
+                    liA.href = `/machine/${type.machine}/${machine.id}`;
+                    li.append(liA);
+                    dropdown.append(li);
+                })
+
+                menu.append(menuA);
+                menu.append(dropdown);
+                navMenu.append(menu);
+            });
+        })
+        .catch(error => console.error('Error:', error));
+</script>
+
+{% block scripts %}
+{% endblock %}

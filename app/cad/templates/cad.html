@@ -1,9 +1,13 @@
 {% extends "base.html" %}
 
 {% block head %}
-<link rel="shortcut icon" href="{{ url_for('static', filename='unity/TemplateData/favicon.ico') }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='unity/TemplateData/style.css') }}">
+<link rel="shortcut icon" href="{{ url_for('static', filename='unity/grinder/TemplateData/favicon.ico') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='unity/grinder/TemplateData/style.css') }}">
 {% endblock %}
+
+{% block sensor1 %} href="/machine/{{machine}}/{{machine_id}}" {% endblock %}
+{% block sensor2 %} href="/machine/{{machine}}/{{machine_id}}" {% endblock %}
+{% block sensor3 %} href="/machine/{{machine}}/{{machine_id}}" {% endblock %}
 
 {% block content %}
 <div id="unity-container" class="unity-desktop">
@@ -56,7 +60,7 @@
     updateBannerVisibility();
     }
 
-    var buildUrl = "{{ url_for('static', filename='unity/Build') }}";
+    var buildUrl = "{{ url_for('static', filename='unity/grinder/Build') }}";
     var loaderUrl = buildUrl + "/Unity.loader.js";
     var config = {
     dataUrl: buildUrl + "/Unity.data",

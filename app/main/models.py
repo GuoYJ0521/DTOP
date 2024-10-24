@@ -23,6 +23,11 @@ class User(db.Model, UserMixin):
         print(password, self.pwd_hash)
         return bcrypt.check_password_hash(self.pwd_hash, password)
 
+    @staticmethod
+    def to_list():
+        users = User.query.all()
+        return [user.email for user in users]
+
     def __repr__(self):
         return f'{self.email, self.name, self.pwd_hash}'
 
